@@ -1,0 +1,19 @@
+function out_data = example_1
+
+options = sdpsettings('solver','mosek','verbose',0,'debug',0);
+
+H = [eye(2) ; eye(2)];
+R1 = [1 0 ; 0 4];
+R2 = [4 0 ; 0 1];
+Q = [R1 eye(2) ; eye(2) R2];
+S = [R1 -eye(2) ; -eye(2) R2];
+
+P = sdpvar(2);                                                              % Optimization variable
+K = sdpvar(2,4);                                                            % Optimization variable
+
+F = [K*H == eye(2), [P K*Q ; Q*K' Q] >= 0, [P K*S ; S*K' S] >= 0];          % Constraints
+J = trace(P);                                                               % Loss function
+optimize(F, J, options);                                                    % Optimize
+
+out_data.K = value(K);
+out_data.P = value(P);
