@@ -1,5 +1,5 @@
-function idx_list = generate_nk_idx_combs(n,k)
-% --- generate_nk_idx_combs() ---------------------------------------------
+function idx_list = get_nk_idx_combs(n,k)
+% --- get_nk_idx_combs() --------------------------------------------------
 % Returns a list with all combinations of indices according to n and k.
 %
 % 2023-10-30 Robin Forsling
