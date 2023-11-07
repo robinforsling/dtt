@@ -28,7 +28,7 @@ switch scen_par.ID
         pm.v_max = 170; pm.a_max = 5; 
 
         dl.topology = [0 1 ; 1 0];
-        dl.schedule = basic_communication_scheme(nagents,N);
+        dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
             kin_par.XT = XT; kin_par.XS = XS{i};
@@ -54,7 +54,7 @@ switch scen_par.ID
         pm.v_max = 200; pm.a_max = 5; 
 
         dl.topology = [0 1 ; 1 0];
-        dl.schedule = basic_communication_scheme(nagents,N);
+        dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
             kin_par.XT = XT; kin_par.XS = XS{i};
@@ -80,7 +80,7 @@ switch scen_par.ID
         pm.v_max = 200; pm.a_max = 10; 
 
         dl.topology = [0 1 ; 1 0];
-        dl.schedule = basic_communication_scheme(nagents,N);
+        dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
             kin_par.XT = XT; kin_par.XS = XS{i};
@@ -106,7 +106,7 @@ switch scen_par.ID
         pm.v_max = 100; pm.a_max = 10; 
 
         dl.topology = [0 1 0  ; 1 0 0 ; 0 1 0];
-        dl.schedule = [basic_communication_scheme(2,N);zeros(1,N)]; dl.schedule(3,11:2:N) = 1;
+        dl.schedule = [basic_communication_schedule(2,N);zeros(1,N)]; dl.schedule(3,11:2:N) = 1;
 
         sigma = [1000 3*d2r ; 1000 3*d2r ; 1000 0.75*d2r];
 
@@ -133,7 +133,7 @@ switch scen_par.ID
         pm.v_max = 200; pm.a_max = 10;
 
         dl.topology = [0 1 0 0 ; 0 0 1 0 ; 1 0 0 1 ; 1 0 0 0];
-        dl.schedule = get_basic_communication_scheme(nagents,N);
+        dl.schedule = basic_communication_schedule(nagents,N);
         %dl.schedule = zeros(ns,N); for i = 1:ns; dl.schedule(1:4:N+(i-1)) = 1; end
 
         for i = 1:nagents

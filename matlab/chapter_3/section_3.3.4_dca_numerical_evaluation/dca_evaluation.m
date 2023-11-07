@@ -19,11 +19,11 @@ CRLB_ON = 1;
 
 
 % PARAMETERS
-par = get_default_sim_params;
+par = default_simulation_parameters;
 par.ID = 1;
 par.sigma_r = 1000;
 par.sigma_az = 1.0*d2r;
-par.M = 100;
+par.M = 10;
 
 
 % --- SIMULATIONS ---

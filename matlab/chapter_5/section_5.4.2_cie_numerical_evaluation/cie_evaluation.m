@@ -10,10 +10,10 @@ set_latex_interpreter;
 % --- PARAMETERS ---
 m_vec = [1 2];
 
-par = get_default_sim_params;
+par = default_simulation_parameters;
 par.ID = 1;
 par.sigma_r = 1000;
-par.sigma_az = 1.5*d2r;
+par.sigma_az = 1.0*d2r;
 par.M = 100;
 par.SEED = round(10000*rand);
 

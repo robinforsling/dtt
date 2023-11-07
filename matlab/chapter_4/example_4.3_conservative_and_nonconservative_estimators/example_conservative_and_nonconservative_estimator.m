@@ -40,7 +40,7 @@ K = P*H'/R;
 
 
 % --- PLOT ---
-clr = get_colors_rgb;
+clr = get_thesis_colors;
 lw = 2;
 
 figure(1);clf;

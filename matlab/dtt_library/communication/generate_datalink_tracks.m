@@ -32,20 +32,20 @@ for i = 1:ntracks
                 end
 
             case 2 % PCO
-                Psi = dimred_pco(R2,m);
+                Psi = dr_pco(R2,m);
 
             case 3 % PARO
-                if dl_model.comm_mgmt.loss_function == 1; Psi = dimred_paro(R1,R2,m);
-                elseif dl_model.comm_mgmt.loss_function == 2; Psi = dimred_paro(R1,R2s,m);
-                elseif dl_model.comm_mgmt.loss_function == 4; Psi = dimred_paro(R1,R2,m,'ci');
+                if dl_model.comm_mgmt.loss_function == 1; Psi = dr_paro(R1,R2,m);
+                elseif dl_model.comm_mgmt.loss_function == 2; Psi = dr_paro(R1,R2s,m);
+                elseif dl_model.comm_mgmt.loss_function == 4; Psi = dr_paro(R1,R2,m,'ci');
                 else; warning('unknown dimred loss function')
                 end
 
             case 4 % GEVO
-                if dl_model.comm_mgmt.loss_function == 1; Psi = dimred_gevo(R1,R2,m);
-                elseif dl_model.comm_mgmt.loss_function == 2; Psi = dimred_gevo(R1,R2s,m,'kf');
-                elseif dl_model.comm_mgmt.loss_function == 4; Psi = dimred_gevo(R1,R2,m,'ci');
-                elseif dl_model.comm_mgmt.loss_function == 6; Psi = dimred_gevo(R1,R2,m,'le');
+                if dl_model.comm_mgmt.loss_function == 1; Psi = dr_gevo(R1,R2,m);
+                elseif dl_model.comm_mgmt.loss_function == 2; Psi = dr_gevo(R1,R2s,m,'kf');
+                elseif dl_model.comm_mgmt.loss_function == 4; Psi = dr_gevo(R1,R2,m,'ci');
+                elseif dl_model.comm_mgmt.loss_function == 6; Psi = dr_gevo(R1,R2,m,'le');
                 else; warning('unknown dimred loss function')
                 end
 

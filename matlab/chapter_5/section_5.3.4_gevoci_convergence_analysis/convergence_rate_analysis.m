@@ -44,7 +44,7 @@ end
 
 
 % --- EVALUATION ----------------------------------------------------------
-c = get_colors_rgb; clr = cell(6,1); lw = 1.5;
+c = get_thesis_colors; clr = cell(6,1); lw = 1.5;
 clr{1} = c.red; clr{2} = c.yellow; clr{3} = c.green; 
 clr{4} = c.blue; clr{5} = c.purple; clr{6} = c.cyan;
 nrow = 1; ncol = length(n_vec)*length(t_vec);
