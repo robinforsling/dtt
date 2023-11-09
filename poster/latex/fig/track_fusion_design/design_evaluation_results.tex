@@ -1,0 +1,86 @@
+
+\newcommand*\drawkf{\draw[line width=2mm,clrkf]}
+\newcommand*\drawci{\draw[line width=2mm,clrci]}
+\newcommand*\drawici{\draw[line width=2mm,clrici]}
+\newcommand*\drawle{\draw[line width=2mm,clrle]}
+\newcommand*\plotcommand{plot[smooth]coordinates}
+
+\def\ks{1}
+\def\kend{12}
+
+\def\xleg{0}
+\def\yleg{19}
+\def\lleg{1.25}
+\def\sleg{8}
+
+\def\addaneesconfidence{\drawaneesconfidence(\ks,.9811)rectangle(\kend,1.0191);}
+
+
+
+
+% --- FIGURE ---
+%\BFS
+
+
+
+
+% RMT
+\def\addxlabel{\node at (6.5,2.0) {$k$};}
+\def\addylabel(#1){\node[rotate=90] at (-2,9) {#1};}
+\def\ymin{4}; \def\ymax{14}
+
+\begin{scope}[yscale=1.2]
+	
+\drawkf\plotcommand{(2,8.129)(5,5.165)(8,4.832)(11,4.820)};
+\drawci\plotcommand{(2,12.713)(5,8.395)(8,7.912)(11,7.893)};
+\drawici\plotcommand{(2,11.812)(5,7.640)(8,7.359)(11,7.356)};
+\drawle\plotcommand{(2,10.770)(5,6.969)(8,6.747)(11,6.743)};
+\foreach \y in {6,8,...,12} {\drawytick(\ks,\y);\node [left] at (\ks,\y) {\y};}
+\foreach \x in {2,5,...,11} {\drawxtick(\x,\ymin);\node [below] at (\x,\ymin) {\x};}
+\drawcoordinateframe(\ks,\ymax)--(\ks,\ymin)--(\kend,\ymin);	
+\addylabel(RMT)
+\addxlabel
+	
+\end{scope}
+
+
+
+
+% COIN
+\def\addxlabel{\node at (6.5,0.1) {$k$};}
+\def\addylabel(#1){\node[rotate=90] at (-2,1.5) {#1};}
+\def\ymin{0.5}; \def\ymax{2.5}
+
+\begin{scope}[xshift=16cm,yshift=1.65cm,yscale=6]
+
+\drawsupportline(\ks,1)--(\kend,1);
+\drawkf\plotcommand{(2,2.068)(5,2.224)(8,2.300)(11,2.419)};
+\drawci\plotcommand{(2,0.734)(5,0.841)(8,0.904)(11,0.892)};
+\drawici\plotcommand{(2,0.796)(5,0.904)(8,0.922)(11,0.909)};
+\drawle\plotcommand{(2,1.076)(5,1.125)(8,1.093)(11,1.068)};
+\foreach \y in {1.0,1.5,2.0} {\drawytick(\ks,\y);\node [left] at (\ks,\y) {\y};}
+\foreach \x in {2,5,...,11} {\drawxtick(\x,\ymin);\node [below] at (\x,\ymin) {\x};}
+\drawcoordinateframe(\ks,\ymax)--(\ks,\ymin)--(\kend,\ymin);
+\addylabel(COIN)
+\addxlabel
+
+\end{scope}
+
+
+
+
+% LEGEND:
+
+\drawci({\xleg},\yleg)--({\xleg+\lleg},\yleg) node [right,black] {CI};
+\drawici({\xleg+\sleg},\yleg)--({\xleg+\lleg+\sleg},\yleg) node [right,black] {ICI};
+\drawle({\xleg+2*\sleg},\yleg)--({\xleg+\lleg+2*\sleg},\yleg) node [right,black] {LE};
+\drawkf({\xleg+3*\sleg},\yleg)--({\xleg+\lleg+3*\sleg},\yleg) node [right,black] {NKF};
+
+
+
+%\EFS
+
+
+
+
+

@@ -1,0 +1,214 @@
+%\pdfminorversion=4 % needed to be able to print it for some reason
+\documentclass[a0paper,portrait,twocols]{def/LiUposter} % there is also A1, but work with A0 and print on A1
+
+\usepackage{def/myposter}
+
+
+
+\title{\Huge{\bfseries Track Fusion Design in Decentralized Target Tracking} } % \vspace{0.5em} \\ \huge{{A Minimal Set of Evaluation Measures}}
+\author{Robin Forsling [\texttt{robin.forsling@liu.se}]} 
+\institute{Division of Automatic Control} % Department of Electrical Engineering
+
+
+
+% BEGIN POSTER
+\begin{document}
+
+
+% TOP ROW
+%\vspace{-5cm}
+%{\begin{minipage}[t][1.98\columnwidth][s]{1.98\columnwidth}
+%
+%\begin{mycolumnbox}[width=2.05\columnwidth,height=20cm]
+%\end{mycolumnbox}
+%\end{minipage}} 
+
+
+
+
+
+% LEFT COLUMN
+{\begin{minipage}{\columnwidth} 
+
+
+\vspace{-3em}
+
+
+
+
+% SUMMARY
+
+\begin{mybox}[title={Summary}]{mydarkgreen}
+The \textbf{design of a track fusion} subsystem in a decentralized single-target tracking (DSTT) system is considered. The approach is to evaluate different track fusion methods using two measures: \textbf{RMT}, related to \emph{tracking performance}; and \textbf{COIN}, related to \emph{uncertainty assessment}.
+\end{mybox}
+
+
+
+
+% BACKGROUND
+\subsection{Background}
+
+\begin{center}
+	\begin{tikzpicture}[scale=.9]
+		\input{fig/track_fusion_design/dstt_scenario.tex}
+	\end{tikzpicture}	
+\end{center}
+
+Consider the DSTT scenario above. Multiple agents (colored circles) use sensor measurements to estimate the state of a common dynamic target (black circle). The track estimates are communicated between the agents for fusion. Tracking a common target implies correlations between local track estimates. The main sources of correlations are:
+\begin{itemize}
+	\item \emph{Common process noise}. Correlations that appear since the same process (target) is tracked by the different agents.
+	\item \emph{Common information}. Correlations that appear due to the sharing and fusion of information. 
+\end{itemize} 
+If these correlations are not handled properly, the track uncertainties will be \emph{\textcolor{myorange}{underestimated}} which means that the tracks \emph{\textcolor{myorange}{cannot be trusted}}.
+
+
+
+
+% TARGET MODEL
+%\subsection{Target Model}
+
+%\begin{mybox}[title={Target State-Space Model}]{darkgray}
+%Let $x_k$ be the target state at time $k$. The following linear state-space model is assumed:
+%\begin{align*}
+%	x_{k+1} &= F_kx_k + w_k, & w_k &\sim \calN(0,Q_k), \\
+%	z_k &= H_kx_k + e_k, & e_k &\sim \calN(0,C_k),
+%\end{align*}
+%where $F_k$ is the state transition model, $Q_k$ is the process noise covariance, $z_k$ is a measurement, $H_k$ is the measurement model, and $C_k$ is the measurement noise covariance, at time $k$. 
+%\end{mybox}
+
+
+
+
+
+
+% DSTT SYSTEM
+\subsection{A Decentralized Single-Target Tracking System}
+
+\vspace{0.5em}
+
+\begin{center}
+	\begin{tikzpicture}[scale=3]
+		\input{fig/track_fusion_design/dstt_system.tex}
+	\end{tikzpicture}
+\end{center}
+
+A DSTT system is illustrated above. It contains three main components:
+\begin{enumerate}
+	\item \emph{State estimation}. Predicts and updates the target state estimate using local sensor measurements.
+	\item \emph{Track fusion}. Fuses the received tracks with the local track.
+	\item \emph{Communication management}. Handles what, when, and with whom to communicate.
+\end{enumerate}
+The state estimation is solved using a Kalman filter. The communication management is given. %The track fusion is to be designed by evaluating different track fusion methods as follows.
+
+
+
+
+\begin{mybox}[title={Problem}]{mydarkgreen}
+Design the \emph{track fusion} such that sufficient track quality is obtained. In particular, the track fusion design must consider two aspects:
+\begin{itemize}
+	\item Sufficient tracking performance in terms of the tracking error.
+	\item Credible (trustworthy) assessment of the track uncertainty.
+\end{itemize}
+\end{mybox}
+The credibility criterion is introduced to quantify if the track uncertainty is underestimated or not.
+
+
+
+% TARGET MODEL
+\subsection{Notation}
+
+Let $x_k$ be the target state at time $k$. An estimate of $x_k$ at time $k$ is given by $(\xhat_k,P_k)$, where $\xhat_k$ is the state estimate and $P_k$ is the computed covariance. The track fusion design is evaluated using Monte Carlo (MC) simulations, with $M$ denoting the number of MC runs. An estimate $(\xhat_k,P_k)$ in the \ith MC run is denoted $(\xhat_k^i,P_k^i)$. The estimation error is denoted $\xtilde_k=\xhat_k-x_k$ or $\xtilde_k^i=\xhat_k^i-x_k$.
+
+
+
+
+\end{minipage} % END LEFT COLUMN
+
+
+
+
+
+      
+% RIGHT COLUMN    
+\begin{minipage}{\columnwidth}
+
+
+\vspace{-3em}
+
+
+
+% RMT
+\subsection{RMT: A Tracking Performance Measure}
+
+Tracking performance is often evaluated using the root mean squared error (RMSE). However, since RMSE requires the true error to be known, RMSE cannot be computed online. What a user has access to is $P_k$. Hence, the \emph{root mean trace} (RMT) is used instead:
+\begin{equation*}
+	\boxed{\text{RMT}_k = \sqrt{\trace\left(\frac{1}{M}\sum_{i=1}^M P_k^i\right)} = \sqrt{\frac{1}{M}\sum_{i=1}^M \trace(P_k^i)}}
+\end{equation*}
+A smaller RMT is interpreted as better tracking performance.
+ 
+
+
+
+% COIN
+\subsection{COIN: An Uncertainty Assessment Measure}
+
+To quantify the uncertainty assessment, the notion of conservativeness is used. An estimate $(\xhat_k,P_k)$ is \emph{conservative} if
+\begin{equation}
+	P_k - \EV(\xtilde_k\xtilde_k\trnsp) = P_k - \Ptilde_k \succeq 0,
+	\label{eq:conservative-estimate}
+\end{equation}
+where $\Ptilde_k-\EV(\xtilde_k\xtilde_k\trnsp)$. Let $P_k=L_kL_k\trnsp$. Then the condition in \eqref{eq:conservative-estimate} is equivalent to $I\succeq L_k\inv\Ptilde_k L_k\invtrnsp$. Let $\lambdamax(\cdot)$ denote the largest eigenvalue. The \emph{conservativeness index} (COIN) is defined as:
+\begin{equation*}
+	\boxed{\text{COIN}_k = \lambdamax\left(L_k\inv\Ptilde_k L_k\invtrnsp\right)}
+\end{equation*} 
+An estimate is conservative \textiff COIN$_k\leq 1$. If $\Ptilde_k$ is unknown it can be approximated by
+\begin{equation*}
+	\Phat_k = \frac{1}{M} \sum_{i=1}^M \xtilde_k^i(\xtilde_k^i)\trnsp.
+\end{equation*} 
+
+
+
+
+% EVALUATION
+\subsection{Design Evaluation}
+
+The design evaluation is illustrated using a DSTT scenario with three agents. For more information about the evaluation scenario, see:
+ 
+\begin{center}
+	\url{https://github.com/robinforsling/dtt}
+\end{center}
+
+The evaluated track fusion methods are: covariance intersection (CI); inverse covariance intersection (ICI); the largest ellipsoid (LE) method; and the \naive Kalman fuser (NKF).
+
+%\vspace{1em}
+
+
+\begin{mybox}[title={Design Evaluation Results}]{darkgray}
+\begin{center}
+	\begin{tikzpicture}[xscale=1.15]
+		\input{fig/track_fusion_design/design_evaluation_results.tex}
+	\end{tikzpicture}
+\end{center}
+
+%\paragraph{Observations}
+NKF yields the best tracking performance but is clearly non-conservative due to poor uncertainty assessment. CI and ICI are conservative \wrt COIN. LE yields better tracking performance than CI and ICI, but the COIN values for LE are slightly above 1.
+
+\paragraph{Concluding Remarks}
+\begin{itemize}
+	\item Choosing the most suitable track fusion method is a compromise between tracking performance and uncertainty assessment.
+	\item Ultimately, the selected track fusion method must provide satisfactory results and tracking quality to the end user.
+\end{itemize}
+
+\end{mybox}
+
+
+
+\end{minipage}} % END RIGHT COLUMN
+
+
+    
+
+ 	 
+\end{document}
+
+

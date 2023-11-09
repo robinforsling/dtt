@@ -1,0 +1,600 @@
+
+\RequirePackage{xspace}
+\RequirePackage{amsmath,amssymb,amsthm}
+
+
+
+
+% ---------------------------------------------------------
+% --- COPYRIGHT -------------------------------------------
+% ---------------------------------------------------------
+\def\figieeecopyright(#1)(#2){\node [rotate=90] at (#1) {\tiny{\textcopyright~{#2}~IEEE}};}
+\def\tabieeecopyright(#1){\tiny{\textcopyright~{#1}~IEEE\xspace}}
+\def\textieeecopyright(#1){\textcopyright~{#1}~IEEE\xspace}
+
+
+
+
+% ---------------------------------------------------------
+% --- MATH OPERATORS --------------------------------------
+% ---------------------------------------------------------
+\let\mathopstyle\rm
+
+\DeclareMathOperator*\argmax{\mathopstyle arg\,max}
+\DeclareMathOperator*\argmin{\mathopstyle arg\,min}
+\DeclareMathOperator*\atantwo{atan2}
+\DeclareMathOperator*\blkdiag{\mathopstyle blkdiag}
+\DeclareMathOperator*\col{\mathopstyle col}
+\DeclareMathOperator*\colspan{\mathopstyle colspan}
+\DeclareMathOperator*\conv{\mathopstyle conv}
+\DeclareMathOperator*\cov{\mathopstyle cov}
+\DeclareMathOperator*\diag{\mathopstyle diag}
+\renewcommand*\det{\mathop{\mathopstyle det}}
+\DeclareMathOperator*\EV{\mathopstyle E}
+\DeclareMathOperator*\maximize{\mathopstyle maximize}
+\DeclareMathOperator*\minimize{\mathopstyle minimize}
+\DeclareMathOperator{\proj}{\mathopstyle proj}
+	\newcommand{\vctproj}[2][]{\proj_{\mathbf{#1}}\mathbf{#2}}
+\DeclareMathOperator*\rank{\mathopstyle rank}
+%\renewcommand*\rem{\mathop{\mathopstyle rem}} % \DeclareMathOperator*\rem{\mathopstyle rem}
+\DeclareMathOperator*\rowspan{\mathopstyle rowspan}
+\DeclareMathOperator*\sign{\mathopstyle sign}
+\DeclareMathOperator*\Span{\mathopstyle span}
+\DeclareMathOperator*\trace{\mathopstyle tr}
+\DeclareMathOperator*\var{\mathopstyle var}
+
+\newcommand*\subjectto{\mathop{\rm subject\; to}}
+
+\newcommand*\inv{^{-1}}
+\newcommand*\invsqrt{^{-\frac{1}{2}}}
+\newcommand*\invtrnsp{^{-\mathsf{T}}}
+\newcommand*\pinv{^+}
+\newcommand*\supsqrt{^\frac{1}{2}}
+\newcommand*\trnsp{^{\mkern-1.5mu\mathsf{T}}}
+
+
+
+
+% ---------------------------------------------------------
+% --- MATH FONTS ------------------------------------------
+% ---------------------------------------------------------
+
+% --- SETS ---
+\newcommand*\bools{\mathbb{B}}
+\newcommand*\reals{\mathbb{R}}
+\newcommand*\complexes{\mathbb{C}}
+\newcommand*\rationals{\mathbb{Q}}
+\newcommand*\naturals{\mathbb{N}}
+\newcommand*\integers{\mathbb{Z}}
+
+\newcommand*\pdset{\mathbb{S}_{++}}
+\newcommand*\psdset{\mathbb{S}_{+}}
+\newcommand*\perms{\mathbb{P}}
+
+\newcommand*\pdsetm{\pdset^m}
+\newcommand*\pdsetmi{\pdset^{m_i}}
+\newcommand*\pdsetn{\pdset^n}
+\newcommand*\pdsetnb{\pdset^{n_2}}
+\newcommand*\pdsetni{\pdset^{n_i}}
+\newcommand*\pdsetnx{\pdset^{n_x}}
+\newcommand*\pdsetny{\pdset^{n_y}}
+
+\newcommand*\psdsetm{\psdset^m}
+\newcommand*\psdsetmi{\psdset^{m_i}}
+\newcommand*\psdsetn{\psdset^n}
+\newcommand*\psdsetnb{\psdset^{n_2}}
+\newcommand*\psdsetni{\psdset^{n_i}}
+\newcommand*\psdsetnx{\psdset^{n_x}}
+\newcommand*\psdsetny{\psdset^{n_y}}
+
+\newcommand*\realsd{{\reals}^d}
+\newcommand*\realsm{{\reals}^m}
+\newcommand*\realsmi{{\reals}^{m_i}}
+\newcommand*\realsmin{{\reals}^{m_i\times n}}
+\newcommand*\realsmm{{\reals}^{m\times m}}
+\newcommand*\realsmn{{\reals}^{m\times n}}
+\newcommand*\realsmnb{{\reals}^{m\times n_2}}
+\newcommand*\realsmni{{\reals}^{m\times n_i}}
+\newcommand*\realsmnx{{\reals}^{m\times n_x}}
+\newcommand*\realsmp{{\reals}^{m\times p}}
+
+\newcommand*\realsn{{\reals}^n}
+\newcommand*\realsnb{{\reals}^{n_2}}
+\newcommand*\realsnbm{{\reals}^{n_2\times m}}
+\newcommand*\realsnbnx{{\reals}^{n_2\times n_x}}
+\newcommand*\realsni{{\reals}^{n_i}}
+\newcommand*\realsnin{{\reals}^{n_i\times n}}
+\newcommand*\realsninx{{\reals}^{n_i\times n_x}}
+\newcommand*\realsniny{{\reals}^{n_i\times n_y}}
+\newcommand*\realsnx{{\reals}^{n_x}}
+\newcommand*\realsnxn{{\reals}^{n_x\times n}}
+\newcommand*\realsnxni{{\reals}^{n_x\times n_i}}
+\newcommand*\realsnxny{{\reals}^{n_x\times n_y}}
+\newcommand*\realsny{{\reals}^{n_y}}
+\newcommand*\realsnyn{{\reals}^{n_y\times n}}
+\newcommand*\realsnyni{{\reals}^{n_y\times n_i}}
+\newcommand*\realsnynx{{\reals}^{n_y\times n_x}}
+\newcommand*\realsnm{{\reals}^{n\times m}}
+\newcommand*\realsnn{{\reals}^{n\times n}}
+\newcommand*\realsnp{{\reals}^{n\times p}}
+
+\newcommand*\realsp{{\reals}^p}
+
+
+% --- HAT ---
+\newcommand*\ahat{\hat{a}}
+\newcommand*\bhat{\hat{b}}
+\newcommand*\chat{\hat{c}}
+\newcommand*\fhat{\hat{f}}
+\newcommand*\ghat{\hat{g}}
+\newcommand*\phat{\hat{p}}
+\newcommand*\qhat{\hat{q}}
+\newcommand*\rhat{\hat{r}}
+\newcommand*\shat{\hat{s}}
+\newcommand*\that{\hat{t}}
+\newcommand*\xhat{\hat{x}}
+\newcommand*\yhat{\hat{y}}
+\newcommand*\zhat{\hat{z}}
+
+\newcommand*\Phat{\hat{P}}
+\newcommand*\Rhat{\hat{R}}
+\newcommand*\Shat{\hat{S}}
+\newcommand*\Yhat{\hat{Y}}
+
+\newcommand*\deltahat{\hat{\delta}}
+\newcommand*\gammahat{\hat{\gamma}}
+
+\newcommand*\Sigmahat{\hat{\Sigma}}
+
+
+% --- TILDE ---
+\newcommand*\atilde{\tilde{a}}
+\newcommand*\btilde{\tilde{b}}
+\newcommand*\ctilde{\tilde{c}}
+\newcommand*\xtilde{\tilde{x}}
+\newcommand*\ytilde{\tilde{y}}
+\newcommand*\ztilde{\tilde{z}}
+
+\newcommand*\deltatilde{\tilde{\delta}}
+\newcommand*\gammatilde{\tilde{\gamma}}
+
+\newcommand*\Ptilde{\tilde{P}}
+\newcommand*\Rtilde{\tilde{R}}
+\newcommand*\Stilde{\tilde{S}}
+
+
+% --- MATH BF --
+\let\bfstyle\bm
+
+\newcommand*\bfa{\bfstyle{a}}
+\newcommand*\bfb{\bfstyle{b}}
+\newcommand*\bfc{\bfstyle{c}}
+\newcommand*\bfd{\bfstyle{d}}
+\newcommand*\bfe{\bfstyle{e}}
+\newcommand*\bff{\bfstyle{f}}
+\newcommand*\bfg{\bfstyle{g}}
+\newcommand*\bfh{\bfstyle{h}}
+\newcommand*\bfi{\bfstyle{i}}
+\newcommand*\bfj{\bfstyle{j}}
+\newcommand*\bfk{\bfstyle{k}}
+\newcommand*\bfl{\bfstyle{l}}
+\newcommand*\bfm{\bfstyle{m}}
+\newcommand*\bfn{\bfstyle{n}}
+\newcommand*\bfo{\bfstyle{o}}
+\newcommand*\bfp{\bfstyle{p}}
+\newcommand*\bfq{\bfstyle{q}}
+\newcommand*\bfr{\bfstyle{r}}
+\newcommand*\bfs{\bfstyle{s}}
+\newcommand*\bft{\bfstyle{t}}
+\newcommand*\bfu{\bfstyle{u}}
+\newcommand*\bfv{\bfstyle{v}}
+\newcommand*\bfw{\bfstyle{w}}
+\newcommand*\bfx{\bfstyle{x}}
+\newcommand*\bfy{\bfstyle{y}}
+\newcommand*\bfz{\bfstyle{z}}
+
+\newcommand*\bfomega{\bm{\omega}}
+\newcommand*\bftheta{\bm{\theta}}
+
+\newcommand*\bfA{\bfstyle{A}}
+\newcommand*\bfB{\bfstyle{B}}
+\newcommand*\bfC{\bfstyle{C}}
+\newcommand*\bfD{\bfstyle{D}}
+\newcommand*\bfE{\bfstyle{E}}
+\newcommand*\bfF{\bfstyle{F}}
+\newcommand*\bfG{\bfstyle{G}}
+\newcommand*\bfH{\bfstyle{H}}
+\newcommand*\bfI{\bfstyle{I}}
+\newcommand*\bfJ{\bfstyle{J}}
+\newcommand*\bfK{\bfstyle{K}}
+\newcommand*\bfL{\bfstyle{L}}
+\newcommand*\bfM{\bfstyle{M}}
+\newcommand*\bfN{\bfstyle{N}}
+\newcommand*\bfO{\bfstyle{O}}
+\newcommand*\bfP{\bfstyle{P}}
+\newcommand*\bfQ{\bfstyle{Q}}
+\newcommand*\bfR{\bfstyle{R}}
+\newcommand*\bfS{\bfstyle{S}}
+\newcommand*\bfT{\bfstyle{T}}
+\newcommand*\bfU{\bfstyle{U}}
+\newcommand*\bfV{\bfstyle{V}}
+\newcommand*\bfW{\bfstyle{W}}
+\newcommand*\bfX{\bfstyle{X}}
+\newcommand*\bfY{\bfstyle{Y}}
+\newcommand*\bfZ{\bfstyle{Z}}
+
+\newcommand*\bfGamma{\bm{\Gamma}}
+\newcommand*\bfSigma{\bm{\Sigma}}
+
+\newcommand*\hbfr{\hat{\bfstyle{r}}}
+\newcommand*\hbfx{\hat{\bfstyle{x}}}
+\newcommand*\hbfy{\hat{\bfstyle{y}}}
+\newcommand*\hbfz{\hat{\bfstyle{z}}}
+
+\newcommand*\hbfgamma{\hat{\bfstyle{\gamma}}}
+
+\newcommand*\tbfx{\tilde{\bfstyle{x}}}
+\newcommand*\tbfy{\tilde{\bfstyle{y}}}
+\newcommand*\tbfz{\tilde{\bfstyle{z}}}
+
+\newcommand*\tbfgamma{\tilde{\bfstyle{\gamma}}}
+
+
+% --- BAR ---
+\newcommand*\xbar{\bar{x}}
+\newcommand*\ybar{\bar{y}}
+\newcommand*\zbar{\bar{z}}
+
+\newcommand*\barH{\bar{H}}
+\newcommand*\barK{\bar{K}}
+\newcommand*\barL{\bar{L}}
+\newcommand*\barP{\bar{P}}
+\newcommand*\barQ{\bar{Q}}
+\newcommand*\barR{\bar{R}}
+\newcommand*\barS{\bar{S}}
+\newcommand*\barT{\bar{T}}
+
+\newcommand*\bbfx{\bar{\bfx}}
+\newcommand*\bbfy{\bar{\bfy}}
+\newcommand*\bbfz{\bar{\bfz}}
+
+
+% --- MATH CALIGRAPHIC ---
+\newcommand*\calA{\mathcal{A}}
+\newcommand*\calB{\mathcal{B}}
+\newcommand*\calC{\mathcal{C}}
+\newcommand*\calD{\mathcal{D}}
+\newcommand*\calE{\mathcal{E}}
+\newcommand*\calF{\mathcal{F}}
+\newcommand*\calG{\mathcal{G}}
+\newcommand*\calH{\mathcal{H}}
+\newcommand*\calI{\mathcal{I}}
+\newcommand*\calJ{\mathcal{J}}
+\newcommand*\calK{\mathcal{K}}
+\newcommand*\calL{\mathcal{L}}
+\newcommand*\calM{\mathcal{M}}
+\newcommand*\calN{\mathcal{N}}
+\newcommand*\calO{\mathcal{O}}
+\newcommand*\calP{\mathcal{P}}
+\newcommand*\calQ{\mathcal{Q}}
+\newcommand*\calR{\mathcal{R}}
+\newcommand*\calS{\mathcal{S}}
+\newcommand*\calT{\mathcal{T}}
+\newcommand*\calU{\mathcal{U}}
+\newcommand*\calV{\mathcal{V}}
+\newcommand*\calW{\mathcal{W}}
+\newcommand*\calX{\mathcal{X}}
+\newcommand*\calY{\mathcal{Y}}
+\newcommand*\calZ{\mathcal{Z}}
+
+
+% --- MATH SF ---
+\newcommand*\sfa{\mathsf{a}}
+\newcommand*\sfax{\mathsf{a_x}}
+\newcommand*\sfay{\mathsf{a_y}}
+\newcommand*\sfaz{\mathsf{a_z}}
+\newcommand*\sfv{\mathsf{v}}
+\newcommand*\sfvx{\mathsf{v_x}}
+\newcommand*\sfvy{\mathsf{v_y}}
+\newcommand*\sfvz{\mathsf{v_z}}
+\newcommand*\sfx{\mathsf{x}}
+\newcommand*\sfy{\mathsf{y}}
+\newcommand*\sfz{\mathsf{z}}
+
+
+% --- MIN & MAX ---
+\newcommand*\fmin{f_{\min}}
+\newcommand*\fmax{f_{\max}}
+\newcommand*\kmin{k_{\min}}
+\newcommand*\kmax{k_{\max}}
+\newcommand*\umin{u_{\min}}
+\newcommand*\umax{u_{\max}}
+\newcommand*\xmin{x_{\min}}
+\newcommand*\xmax{x_{\max}}
+\newcommand*\ymin{y_{\min}}
+\newcommand*\ymax{y_{\max}}
+\newcommand*\zmin{z_{\min}}
+\newcommand*\zmax{z_{\max}}
+
+\newcommand*\lambdamin{\lambda_{\min}}
+\newcommand*\lambdamax{\lambda_{\max}}
+\newcommand*\rhomin{\rho_{\min}}
+\newcommand*\rhomax{\rho_{\max}}
+
+
+% ---------------------------------------------------------
+% --- SPECIFIC MACROS -------------------------------------
+% ---------------------------------------------------------
+
+\newcommand*\anees{\text{ANEES}}
+\newcommand*\coin{\text{COIN}}
+\newcommand*\nees{\text{NEES}}
+\newcommand*\rmse{\text{RMSE}}
+\newcommand*\rmt{\text{RMT}}
+
+
+% --- CARDINALITY ---
+\newcommand*\nagent{N}
+\newcommand*\ntarget{{n_t}}
+
+\newcommand*\na{n_1}
+\newcommand*\nb{n_2}
+\newcommand*\nk{n_k}
+\newcommand*\nx{n_x}
+\newcommand*\ny{n_y}
+
+
+% --- STATE ESTIMATION & TRACK FUSION ---
+\newcommand*\ys{y^s}
+\newcommand*\Rs{R^s}
+\newcommand*\yDL{y^{\text{dl}}}
+\newcommand*\RDL{R^{\text{dl}}}
+
+\newcommand*\kk{_{k|k}}
+\newcommand*\kkm{_{k|k-1}}
+\newcommand*\kl{_{k|l}}
+\newcommand*\kmkm{_{k-1|k-1}}
+\newcommand*\kpk{_{k+1|k}}
+\newcommand*\kpkp{_{k+1|k+1}}
+
+\newcommand*\Pbc{P^{\textsc{bsc}}}
+\newcommand*\Pkf{P^{\textsc{kf}}}
+\newcommand*\Pci{P^{\textsc{ci}}}
+\newcommand*\Pici{P^{\textsc{ici}}}
+\newcommand*\Ple{P^{\textsc{le}}}
+\newcommand*\Pfull{P_{\text{full}}}
+\newcommand*\Pfkf{\Pfull^{\textsc{KF}}}
+\newcommand*\Pfci{\Pfull^{\textsc{CI}}}
+\newcommand*\Pnaive{\Pkf}
+\newcommand*\Pro{P^{\textsc{ro}}}
+
+\newcommand*\Ppos{P_{\text{pos}}}
+\newcommand*\Ptrue{P^\text{true}}
+
+
+% --- DCA ---
+\newcommand*\Domega{D^\omega}
+\newcommand*\Ds{D^s}
+
+\newcommand*\ndca{n_{\text{dca}}}
+\newcommand*\nfull{n_{\text{full}}}
+
+
+% --- CLUE ---
+\newcommand*\Pset{\calC}
+\newcommand*\Rset{\calA}
+\newcommand*\Plbset{\calB_l}
+\newcommand*\Pbcset{\calB_b}
+\newcommand*\Pubset{\calB_u}
+\newcommand*\Rbndset{\calB}
+
+\newcommand*\Kbclue{K^\star}
+\newcommand*\Klb{K_l}
+\newcommand*\Kub{K_u}
+\newcommand*\Plb{P_l}
+\newcommand*\Pbclue{P^\star}
+\newcommand*\Pub{P_u}
+\newcommand*\Radm{S}
+\newcommand*\Rbnd{B}
+\newcommand*\Rlb{R_l}
+\newcommand*\Rub{R_u}
+
+
+% --- DR ---
+\newcommand*\ndr{n_{\text{dr}}}
+\newcommand*\nexcl{n_{\text{ex}}}
+
+\newcommand*\M{\Psi}
+\newcommand*\MH{\M_H}
+\newcommand*\MHt{\MH\trnsp}
+\newcommand*\Mt{\M\trnsp}
+
+\newcommand*\MR{\Phi}
+\newcommand*\MT{\Theta}
+\newcommand*\MTt{\MT\trnsp}
+
+\newcommand*\Mgevo{\M_{\text{gevo}}}
+\newcommand*\Mopt{\M^\star}
+\newcommand*\Moptt{(\Mopt)\trnsp}
+\newcommand*\Mpco{\M_{\text{pco}}}
+\newcommand*\Mtot{\M^c}
+\newcommand*\subM{_\M}
+
+\newcommand*\Xopt{X^\star}
+\newcommand*\Xoptt{(X^\star)\trnsp}
+
+\newcommand*\yM{y_\M}
+\newcommand*\KM{K_\M}
+\newcommand*\RM{R_\M}
+\newcommand*\RMi{\RM\inv}
+\newcommand*\SM{S_\M}
+\newcommand*\YM{\calY_\M}
+\newcommand*\dM{d_\M}
+
+\newcommand*\Jlim{\bar{J}}
+\newcommand*\Jlow{J_{\text{low}}}
+\newcommand*\Mlim{\bar{\M}}
+\newcommand*\omegalim{\bar{\omega}}
+\newcommand*\Philim{\bar{\Phi}}
+\newcommand*\Philimt{\Philim\trnsp}
+
+\newcommand*\alphalow{\alpha_{\text{min}}}
+\newcommand*\alphahigh{\alpha_{\text{max}}}
+
+\newcommand*\imin{i^*}
+\newcommand*\uij{u_i}
+
+\newcommand*\subfull{_{\text{full}}}
+\newcommand*\subred{_{\text{dr}}}
+
+\newcommand*\Afull{\calM\subfull}
+\newcommand*\Afullev{\Afull^{\text{ev}}}
+\newcommand*\Ared{\calM\subred}
+\newcommand*\Aredev{\Ared^{\text{ev}}}
+\newcommand*\Aredap{\hat{\calM}\subred}
+
+\newcommand*\AC{\pi}
+\newcommand*\ACopt{\AC^\star}
+\newcommand*\estset{\calY}
+\newcommand*\estseta{\estset_1}
+\newcommand*\estsetb{\estset_2}
+\newcommand*\estsetM{\estset_\M}
+
+%\newcommand*\PIC{q_e}
+
+
+% --- SUB SUP ---
+\renewcommand*\aa{_{1(1)}}
+\newcommand*\ab{_{1(2)}}
+\newcommand*\ai{_{1(i)}}
+\newcommand*\aj{_{1(j)}}
+\newcommand*\aN{_{1(\ntarget)}}
+
+\newcommand*\ba{_{2(1)}}
+\newcommand*\bb{_{2(2)}}
+\newcommand*\bi{_{2(i)}}
+\newcommand*\bj{_{2(j)}}
+\newcommand*\bN{_{2(\ntarget)}}
+
+\newcommand*\Ma{_{\M(1)}}
+\newcommand*\Mb{_{\M(2)}}
+\newcommand*\Mi{_{\M(i)}}
+\newcommand*\Mj{_{\M(j)}}
+\newcommand*\MN{_{\M(\ntarget)}}
+
+\newcommand*\nua{_{\nu(1)}}
+\newcommand*\nub{_{\nu(2)}}
+\newcommand*\nui{_{\nu(i)}}
+\newcommand*\nuj{_{\nu(j)}}
+\newcommand*\nuN{_{\nu(\ntarget)}}
+
+\newcommand*\suba{_{(1)}}
+\newcommand*\subaa{_{(11)}}
+\newcommand*\subaN{_{(1\ntarget)}}
+\newcommand*\subb{_{(2)}}
+\newcommand*\subc{_{(3)}}
+\newcommand*\subd{_{(4)}}
+\newcommand*\sube{_{(5)}}
+\newcommand*\subf{_{(6)}}
+\newcommand*\subi{_{(i)}}
+\newcommand*\subii{_{(ii)}}
+\newcommand*\subij{_{(ij)}}
+\newcommand*\subji{_{(ji)}}
+\newcommand*\subjj{_{(jj)}}
+\newcommand*\subj{_{(j)}}
+\newcommand*\subN{_{(\ntarget)}}
+\newcommand*\subNa{_{(\ntarget)}}
+\newcommand*\subNN{_{(\ntarget\ntarget)}}
+
+\newcommand*\supa{^{(1)}}
+\newcommand*\supb{^{(2)}}
+\newcommand*\supc{^{(3)}}
+\newcommand*\supd{^{(4)}}
+\newcommand*\supe{^{(5)}}
+\newcommand*\supf{^{(6)}}
+\newcommand*\supi{^{(i)}}
+\newcommand*\supij{^{(ij)}}
+\newcommand*\supj{^{(j)}}
+\newcommand*\supN{^{(\ntarget)}}
+
+
+
+
+% --- UNITS ---
+\newcommand*\degrees{^\circ}
+\newcommand*\metersquared{\meter$^2$\@\xspace}
+
+\newcommand*\unitsigmawcam{\meter\second$^{-\frac{5}{2}}$}
+\newcommand*\unitsigmawcpm{\meter\second$^{-\frac{1}{2}}$}
+\newcommand*\unitsigmawcvm{\meter\second$^{-\frac{3}{2}}$}
+
+% --- EVALUATION ---
+\newcommand*\subpos{_\text{pos}}
+
+
+% ---------------------------------------------------------
+% --- MISC ------------------------------------------------
+% ---------------------------------------------------------
+\newcommand*\idm{I}
+\newcommand*\zm{0}
+
+\newcommand*\matlab{\textsc{Matlab}\textsuperscript{\textregistered}\xspace}
+\newcommand*\mosek{\texttt{MOSEK}\xspace}
+\newcommand*\yalmip{\texttt{YALMIP}\xspace}
+
+\newcommand*\ith{$i$th\xspace}
+\newcommand*\jth{$j$th\xspace}
+\newcommand*\kth{$k$th\xspace}
+\newcommand*\lth{$l$th\xspace}
+\newcommand*\ellth{$\ell$th\xspace}
+\newcommand*\nuth{$\nu$th\xspace}
+\newcommand*\naive{na\"{i}ve\xspace}
+
+
+
+\newcommand*\BBM{\begin{bmatrix}}
+\newcommand*\EBM{\end{bmatrix}}
+\newcommand*\BEQ{\begin{equation}}
+\newcommand*\EEQ{\end{equation}}
+\newcommand*\BBSM{\left[\begin{smallmatrix}}
+\newcommand*\EBSM{\end{smallmatrix}\right]}	
+\newcommand*\BSM{\begin{smallmatrix}}
+\newcommand*\ESM{\end{smallmatrix}}
+
+\newcommand*\BFS{\begin{footnotesize}}
+\newcommand*\EFS{\end{footnotesize}}
+
+
+
+
+% ---------------------------------------------------------
+% --- COMMANDS --------------------------------------------
+% ---------------------------------------------------------
+\newcommand*\contributionheading{\subsection*}
+\newcommand*\papersummary{\paragraph{Summary:}\xspace}
+\newcommand*\authorscontribution{\paragraph{Author's contributions:}\xspace}
+
+
+% --- FROM MYTHESIS.STY ---
+\newcommand{\chapterref}[1]{\hyperref[#1]{chapter~\ref*{#1}}}
+\newcommand{\Chapterref}[1]{\hyperref[#1]{Chapter~\ref*{#1}}}
+
+\newcommand{\sectionref}[1]{\hyperref[#1]{section~\ref*{#1}}}
+\newcommand{\Sectionref}[1]{\hyperref[#1]{Section~\ref*{#1}}}
+
+\newcommand{\theoremref}[1]{\hyperref[#1]{theorem~\ref*{#1}}}
+\newcommand{\Theoremref}[1]{\hyperref[#1]{Theorem~\ref*{#1}}}
+
+\newcommand{\exampleref}[1]{\hyperref[#1]{example~\ref*{#1}}}
+\newcommand{\Exampleref}[1]{\hyperref[#1]{Example~\ref*{#1}}}
+
+\newcommand{\figureref}[1]{\hyperref[#1]{figure~\ref*{#1}}}
+\newcommand{\Figureref}[1]{\hyperref[#1]{Figure~\ref*{#1}}}
+
+\newcommand{\tableref}[1]{\hyperref[#1]{table~\ref*{#1}}}
+\newcommand{\Tableref}[1]{\hyperref[#1]{Table~\ref*{#1}}}
+
+\newcommand{\pagepageref}[1]{\hyperref[#1]{page~\pageref*{#1}}}
+
+
+

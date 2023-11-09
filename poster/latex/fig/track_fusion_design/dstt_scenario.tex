@@ -1,0 +1,37 @@
+
+% AGENTS
+\def\ra{0.75}
+
+
+
+
+% --- FIGURE ---
+\BFS
+
+\drawtargettrajectory [path fading=east] plot [smooth, tension=1] coordinates {(0,0) (7,5) (15,1) (24,3) (30,4)};
+\node at (0,0) {\mycircle{black}};
+
+
+% AGENT 1
+\def\xa{(-8,3)}
+\draw [rotate around={-20:\xa}] \sensoropt{clra} \xa -- (-3,5) to [out=-60,in=60] (-3,1) -- cycle;	
+\drawcomarrow[->,rotate around={11:\xa}] \xa -- (-4,3);
+\drawagent{clra} \xa circle [radius = \ra];
+
+
+% AGENT 2
+\def\xa{(15,8)}
+\draw [rotate around={-140:\xa}] \sensoropt{clrb} \xa -- (20,10) to [out=-60,in=60] (20,6) -- cycle;
+\drawcomarrow[->,rotate around={11:\xa}] \xa -- (11,8);
+\drawcomarrow[->,rotate around={-35:\xa}] \xa -- (19,8);
+\drawagent{clrb} \xa circle [radius = \ra];
+
+
+% AGENT 3
+\def\xa{(27,0)}
+\draw [rotate around={180:\xa}] \sensoropt{clrc} \xa -- (32,2) to [out=-60,in=60] (32,-2) -- cycle;	
+\drawcomarrow[->,rotate around={-35:\xa}] \xa -- (23,0);
+\drawagent{clrc} \xa circle [radius = \ra];
+
+
+\EFS
