@@ -5,13 +5,15 @@ function [agent,process] = track_fusion_design(varargin)
 %
 % 2023-11-09 Robin Forsling
 
+addpath('lib/')
 set_latex_interpreter;
+
 
 
 % --- PARAMETERS ----------------------------------------------------------
 par.nagents = 3;
 par.nk = 12;
-par.M = 10000;
+par.M = 100;
 par.network_connectivity = 1;                                               % 1 = reduced, 2 = full
                                                         
 
@@ -110,6 +112,8 @@ for i = 1:par.nagents; plot_stats(stats,i,par); end
 % --- GENERATE TIKZ CODE --------------------------------------------------
 generate_tikz_code(stats,par)
 
+rmpath('lib/')
+
 end
 
 
@@ -169,7 +173,7 @@ function plot_stats(stats,iagent,par)
     k_fu = get_time_of_fusion(par);
     idx = k_fu{iagent};
 
-    clr = get_thesis_colors;
+    clr = get_rf_colors;
     lw = 2;
 
     figure(iagent);clf
@@ -189,8 +193,6 @@ function plot_stats(stats,iagent,par)
     xlabel('$k$','interpreter','latex'); ylabel('COIN'); box on
 
     legend(gca,[hkf hci hici hle],'NKF','CI','ICI','LE')
-
-    set_fontsize_all(14)    
 
 end
 
@@ -443,3 +445,24 @@ function rec = get_datarecord(par,process)
     for j = 1:par.nagents; rec.agent{j} = s; end
 end
 
+function A = make_symmetric(A)
+    A = (A+A')/2;
+end
+
+function [in_vector,idx] = is_element_in_vector(element,vector)
+    idx = [];
+    in_vector = 0;
+    n = length(vector);
+    for k = 1:n
+        if element == vector(k)
+            in_vector = 1;
+            idx = [idx k];
+        end
+    end
+end
+
+function set_latex_interpreter()
+    set(0,'DefaultTextInterpreter','latex');
+    set(0,'DefaultLegendInterpreter','latex');
+    set(0,'DefaultAxesTickLabelInterpreter','latex');
+end
