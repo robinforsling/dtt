@@ -4,6 +4,8 @@ Source code, posters, and other material related to PhD thesis
 
 > Robin Forsling, *The Dark Side of Decentralized Target Tracking: Unknown Correlations and Communication Constraints*, Linköping University, Linköping, Sweden, Dec. 2023.
 
+The thesis is available here: https://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-199098
+
 ## Thesis Source Code
 
 The thesis source code is written in Matlab and is contained in `src/`
