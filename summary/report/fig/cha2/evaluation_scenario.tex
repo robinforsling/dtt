@@ -1,0 +1,42 @@
+
+
+\def\ragent{0.5}
+
+\def\xa{-2,1}
+\def\xb{5,0}
+\def\xt{3,8}
+
+\def\xsu{2,1.0}
+\def\xsl{2,-1.0}
+
+
+% --- FIGURE ---
+\BFS
+
+
+% TARGET:
+\drawtargettrajectory[smooth](3,8)--(3.206,7.886)--(3.416,7.781)--(3.631,7.684)--(3.849,7.595)--(4.070,7.515)--(4.294,7.444)--(4.521,7.381)--(4.750,7.328)--(4.981,7.283)--(5.214,7.248)--(5.447,7.222)--(5.682,7.205)--(5.917,7.197)--(6.153,7.198)--(6.388,7.209)--(6.622,7.228)--(6.855,7.257);
+\node at (\xt) {\mycircle{black}};
+
+
+% MEAS COV:
+\drawdefaultellipse{clra}(\xt)ellipse[x radius = 2.447, y radius = .367, rotate = 54.5];
+\drawdefaultellipse{clrb}(\xt)ellipse[x radius = 2.447, y radius = .352, rotate = 104.0];
+
+
+% AGENT 1:
+\draw\sensoropt{clra} [rotate around={54:(\xa)}] (\xa) -- ($(\xa)+(\xsu)$) to [out=-60,in=60] ($(\xa)+(\xsl)$) -- cycle;
+\drawcomarrow[->] (\xa)--($(\xa)!.25!(\xb)$);	
+\drawagent{clra} (\xa) circle [radius = \ragent];
+
+
+% AGENT 2:
+\draw\sensoropt{clrb} [rotate around={104:(\xb)}] (\xb) -- ($(\xb)+(\xsu)$) to [out=-60,in=60] ($(\xb)+(\xsl)$) -- cycle;
+\drawcomarrow[->] (\xb)--($(\xb)!.25!(\xa)$);	
+\drawagent{clrb} (\xb) circle [radius = \ragent];
+
+
+\EFS
+
+%($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }	  
+%\def\middlepoint(#1)(#2){($(#1)!.5!(#2)$)}   

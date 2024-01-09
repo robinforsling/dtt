@@ -1,0 +1,84 @@
+
+% ------------------------------------------------
+% --- FINAL REMARKS ------------------------------
+% ------------------------------------------------
+
+\chapter{Final Remarks} \label{cha:final-remarks}
+
+The main purpose with this report was to summarize the thesis \cite{Forsling2023Phd} with a particular focus on practical aspects. We have discussed: (i) the evaluation of track fusion design; and (ii) how to design the communication management in case of communication constraints. 
+
+
+% NOT INCLUDED CONTENTS
+\section*{Not Included Contents}
+
+The majority of the contents presented in the thesis have been excluded from this report. A list of the excluded material is provided below. The chapter numbering refer to the thesis chapters.
+
+% CHAPTER 2
+\paragraph{Chapter~2}
+\begin{itemize}
+	\item mathematical preliminaries
+	\item linear estimation, the best linear unbiased estimation, and conservative estimation
+	\item review of prior work
+\end{itemize}
+
+% CHAPTER 3
+\paragraph{Chapter~3}
+\begin{itemize}
+	\item Bar-Shalom--Campo (\abbrBSC) formulas for track fusion
+	\item sources of correlations: common process noice and common information
+	\item example of why it in general is impossible to keep track of correlations in \abbrDTT applications
+	\item \abbrDCA
+	\begin{itemize}
+		\item two methods for preserving conservativeness
+		\item numerical evaluation
+	\end{itemize}
+\end{itemize}
+
+% CHAPTER 4
+\paragraph{Chapter~4}
+\begin{itemize}
+	\item the conservative linear unbiased estimation (\abbrCLUE) framework for optimal conservative estimation
+	\begin{itemize}
+		\item problem formalization
+		\item theoretical bounds
+		\item theoretical and numerical evaluation
+	\end{itemize}
+	\item general \abbrCLUE using robust optimization
+	\item specialized \abbrCLUE
+	\begin{itemize}
+		\item theoretical results related to conservativeness and optimality
+		\item inverse covariance intersection, and several other track fusion methods tailored to specific correlation structures
+	\end{itemize}
+\end{itemize}
+
+% CHAPTER 5
+\paragraph{Chapter~5}
+\begin{itemize}
+	\item message coding solution for \abbrDR estimates
+	\item the principal component optimization (\abbrPCO) method
+	\item \abbrGEVO
+	\begin{itemize}
+		\item derivation of the \abbrGEVO framework
+		\item \abbrGEVO tailored to \abbrBSC
+		\item change of basis and the singular case
+		\item choosing the parameter $m$
+		\item convergence analysis for \GEVOCI
+		\item theoretical properties of \GEVOLE
+		\item theoretical comparison to \abbrPCO
+		\item numerical evaluation
+	\end{itemize}
+	\item \abbrCIE
+	\begin{itemize}
+		\item motivation
+		\item analysis of the decorrelation procedure
+		\item convergence example
+		\item numerical evaluation and comparison with the case when global knowledge is available
+	\end{itemize}
+	\item dimension reduction for association quality
+\end{itemize}
+
+
+
+
+
+

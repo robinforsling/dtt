@@ -1,0 +1,356 @@
+
+% ------------------------------------------------
+% --- COMMUNICATION MANAGEMENT DESIGN ------------
+% ------------------------------------------------
+
+\chapter{Communication Management: Design and Implementation} \label{cha:communication}
+
+A main advantage of \abbrDTT is the sharing of information about targets. However, it is not always possible to communicate all target data. For instance, it might be that only specific parts of tracks are allowed to be exchanged or that we want to minimize the transmitted data to be able to lower the electromagnetic signature. In this chapter, we first deal with the case where only the diagonal entries of covariance matrices are exchanged. We then consider the case where the communication is reduced by transforming the communicated tracks into a lower-dimensional subspace. At the end, we propose a resolution to the problem of only having access to local information when reducing dimensionality.
+
+
+
+
+
+% --- DCA ---
+\section{Communicating Diagonal Covariance Matrices}
+
+Let $y_i=x+v_i$, such that $y_i\in\realsnx$ and $R_i=\cov(\bfv_i)\succ0$. Assume that Agent~$i$ wants to exchange $(y_i,R_i)$. Then $\nx$ parameters for $y_i$ and $\nx(\nx+1)/2$ parameters for $R_i$ must be transmitted, yielding a total of $\nx(\nx+3)/2$ parameters to be transmitted. One way to reduce the communication load is to only communicate the diagonal elements of $R_i$, hence reducing the total number of transmitted parameters to $2\nx$. 
+
+In this section, the communication is constrained such that the complete $y_i$ but only a diagonal representation of $R_i$ are allowed to be exchanged. The problem is referred to as the \emph{diagonal covariance approximation} (\abbrDCA).
+
+
+% THE PROBLEM
+\subsection{The Diagonal Covariance Approximation} \label{sec:dca}
+
+Let $d_{i,j}$ be the \jth diagonal entry of $R_i$. Let $s_j\geq1$ be a real-valued scalar. Then $D_i$ and $\Ds_i$ are defined as
+\begin{align}
+	D_i &= \diag(d_{i,1},\dots,d_{i,\nx}), &
+	\Ds_i &= \diag(s_1d_{i,1},\dots,s_{\nx}d_{i,\nx}).
+	\label{eq:dca-matrices}
+\end{align} 
+Provided next is an example of the implication of the \abbrDCA. Thereafter, the specific problem studied in this section is defined.
+
+
+% Motivating example
+\subsubsection{Motivating Example}
+
+Let $R_i = \BBSM4&1\\1&1\EBSM$, such that $D_i=\diag(4,1)$. Since $R_i=\cov(\bfv_i) = \EV(\bfv_i\bfv_i\trnsp)$, $(y_i,R_i)$ is a conservative estimate. However, since  
+\begin{equation*}
+	D_i - \EV(\bfv_i\bfv_i\trnsp) = D_i - R_i = \BBM0&1\\1&0\EBM \not\succeq0,
+\end{equation*}
+the estimate $(y_i,D_i)$ is \emph{not} conservative. Consider now $s_1=s_2=2$ such that $\Ds_i=2D_i$. In this case, 
+\begin{equation*}
+	\Ds_i - \EV(\bfv_i\bfv_i\trnsp) = \BBM4&-1\\-1&1 \EBM \succeq0,
+\end{equation*}
+and hence $(y_i,\Ds_i)$ is a conservative estimate. This example is illustrated in Figure~\ref{fig:dca:motivating-example}.
+
+\begin{figure}[tb]
+	\centering
+	\begin{tikzpicture}[scale=.75]
+		\input{fig/cha3/dca_motivating_example.tex}
+	\end{tikzpicture}
+	\caption{Motivating example for the \abbrDCA problem. Let $(y_i,R_i)$ be the original local estimate. If $R_i$ is replaced by the diagonal matrix $D_i$, then the resulting estimate $(y_i,D_i)$ is not conservative. A conservative estimate $(y_i,\Ds_i)$ is obtained by replacing $R_i$ by $\Ds_i=2D_i$. }
+	\label{fig:dca:motivating-example}
+\end{figure}
+
+
+% Problem formulation
+\subsubsection{Problem Formulation}
+
+The previous example demonstrates that it is possible to maintain conservativeness under the \abbrDCA provided that the $D_i-R_i\neq0$ is handled in some way, \eg, by using an inflated diagonal approximation $\Ds_i$ of $R_i$. Assume without loss of generality (\wolog) that Agent~$2$ transmits a local estimate to Agent~1 under the \abbrDCA. The goal is for Agent~1 to fuse the received estimate with its local estimate, where the fused estimate is conservative. How conservativeness is preserved under the \abbrDCA depends on what data is being exchanged. The following two options are considered:
+\begin{enumerate}[label=D\arabic*]
+	\item Agent~2 transmits $(y_2,\Ds_2)$ to Agent~1, where $\Ds_2\succeq R_2$. In this case, Agent~2 has already preserved conservativeness, and hence, Agent~1 can use the received estimate directly without any additional action.
+	\item Agent~2 transmits $(y_2,D_2)$ to Agent~1. In this case, Agent~1 must explicitly handle that $D_2\not\succeq R_2$ to ensure conservativeness after track fusion.
+\end{enumerate}
+
+If $\lambdamax(R_2)<\infty$, then it is always possible to scale $D_2$ using finite valued scaling factors $s_1,\dots,s_{\nx}$ such that $\Ds_2\succeq R_2$. However, since information is the inverse of covariance, inflating $D_2$ implies information is lost. Hence, it is desirable to scale $D_2$ sufficiently to ensure that $\Ds_2\succeq R_2$, but no more than that.
+
+
+% PRESERVING CONSERVATIVENESS
+\subsection{Methods for Preserving Conservativeness} \label{sec:dca:proposed-methods}
+
+The thesis proposes four methods for preserving conservativeness. The methods that use option D1 are:
+\begin{itemize}
+	\item \emph{Eigenvalue based scaling} (DCA-EIG). Agent~2 exchanges $(y_2,\Ds_2)$, where $\Ds_2=s^\star D_2$ and $s^\star$ is given in \cite[Theorem~3.10]{Forsling2023Phd}.
+	\item \emph{Optimization based scaling} (DCA-OPT). Agent~2 exchanges $(y_2,\Ds_2)$, where $\Ds_2$ is according to \eqref{eq:dca-matrices} and $s_1,\dots,s_{\nx}$ are the solutions to \cite[(3.36)]{Forsling2023Phd}.
+	\item \emph{Diagonal-dominance based scaling} (DCA-DOM). Agent~2 exchanges $(y_2,\Ds_2)$, where $\Ds_2$ is computed according to \cite[(3.38)]{Forsling2023Phd}.
+\end{itemize}
+The method that uses option D2 is:
+\begin{itemize}
+	\item \emph{Hyperrectangle enclosing} (DCA-HYP). Agent~1 receives $(y_2,D_2)$ and computes a conservative estimate using, \eg, \eqref{eq:dca-hyp:ci} or \eqref{eq:dca-hyp:kf}.
+\end{itemize}
+Only DCA-EIG and DCA-HYP are considered in this report.
+
+
+
+
+% DCA-EIG
+\subsubsection{Eigenvalue Based Scaling}
+
+Assume that the scaling factors are restricted as $s_1=\dots=s_{\nx}=s$ such that $\Ds_2=sD_2$ is obtained by uniform scaling of $D_2$. Under this restriction, the optimal scaling factor $s^\star$ is given by
+\begin{equation} \label{eq:opt:dca-eig}
+\begin{aligned}
+	& \underset{s}{\minimize} & & s \\
+	& \subjectto & & \Ds_2 = sD_2 \succeq R_2.
+\end{aligned}	
+\end{equation}
+The solution to the problem in \eqref{eq:opt:dca-eig} is provided by \cite[Theorem~3.10]{Forsling2023Phd}. Essentially, the theorem states that $s^\star$ is given by the largest eigenvalue of the correlation matrix $C_2=D_2\invsqrt R_2D_2\invsqrt$.
+
+If DCA-EIG is used, then $(y_1,R_1)$ and $(y_2,\Ds_2)$ can be fused directly by the preferred track fusion method.
+
+
+
+
+
+% DCA-HYP
+\subsubsection{Hyperrectangle Enclosing}
+
+If Agent~1 receives $(y_2,D_2)$ from Agent~2, then Agent~1 needs to inflate $D_2$ in order to be able to reach a conservatively fused result. However, from the point-of-view of Agent~1, $R_2$ can be any element in the set
+\begin{equation}
+	\calA = \left\{ \left. B \in \psdsetnx \,\right\vert\, [B]_{ii} = d_{2,i} \right\},
+	\label{eq:set:dca-hyp}
+\end{equation}
+where $d_{2,i}=[D_2]_{ii}$. The set $\calA$ is interpreted as the union $\calR=\bigcup_{B\in\calA}\calE(B)$. In essence, $\calR$ is an axis-aligned \emph{hyperrectangle}, where the length of the \ith side is $2\sqrt{[R_2]_{ii}}$. The hyperrectangle is illustrated in Figure~\ref{fig:dca:hyperrectangle-enclosing} for $\nx=2$ and $R_2=\BBSM4&1\\1&1\EBSM$. 
+
+Agent~1 derives $(y_2,\Domega_2)$ from $(y_2,D_2)$, where $\Domega_2$ needs to satisfy $\Domega_2\succeq R_2$ in order to preserve conservativeness. However, since Agent~1 does not know which element $B\in\calA$ which is equal to $R_2$, Agent~1 must ensure $\Domega_2\succeq B,\forall B\in\calA$ to be sure that $\Domega_2\succeq R_2$. In particular, Agent~1 wants to solve
+\begin{equation} \label{eq:opt:eig-hyp}
+\begin{aligned}
+	& \underset{s_1,\dots,s_{\nx}\geq1}{\minimize} & & J(\Ds_2) \\
+	& \subjectto & & \Ds_2 = \diag\left(s_1d_{2,1},\dots,s_{\nx}d_{2,\nx}\right) \succeq B, \forall B\in\calA.	
+\end{aligned}	
+\end{equation}
+The solution to \eqref{eq:opt:eig-hyp} is given by the following \cite[Theorem~3.12]{Forsling2023Phd}, which provides a specific parametrization $\Domega_2$ of $\Ds_2$, \ie,
+\begin{align}
+	\Domega_2 &= \diag\left(\frac{d_{2,1}}{\omega_1},\dots,\frac{d_{2,\nx}}{\omega_{\nx}}\right), &
+	\omega_i &\in (0,1), &
+	\sum_{i=1} \omega_i &= 1,	
+	\label{eq:dca-hyp:parametrization}
+\end{align}
+where $d_{2,i}=[D_2]_{ii}$ and $\omega_i=1/s_i$. Crucial here are the following two properties: (i) $\Domega_2\succeq B,\forall B\in\calA$; and (ii) $\calE(\Domega_2)$ bounds $\calR$ tightly. Several $\Domega_2$, for different values of $\omega_1=1-\omega_2$, are illustrated in Figure~\ref{fig:dca:hyperrectangle-enclosing}, where also the tightness concept is demonstrated.
+
+\begin{figure}[tb]
+	\centering
+	\begin{tikzpicture}[scale=.8]
+		\input{fig/cha3/example_hyperrectangle_enclosing.tex}
+	\end{tikzpicture}
+	\caption{Illustration of $\calA$. The set $\calA$ can be geometrically interpreted as a rectangle $\calR=\bigcup_{B\in\calA}\calE(B)$ if $\nx=2$. The ellipse $\calE(\Domega_2)$, with $\Domega_2$ given according to \eqref{eq:dca-hyp:parametrization}, tightly encloses $\calR$ as the boundary of $\calE(\Domega_2)$ intersects all corners of $\calR$.}
+	\label{fig:dca:hyperrectangle-enclosing}
+\end{figure}
+
+
+As noted in \cite{Forsling2019Fusion}, $\Domega_2$ can be integrated directly into the \abbrCI algorithm. The estimates $(y_1,R_1)$ and $(y_2,D_2)$ are fused conservatively using \abbrCI as
+\begin{subequations} \label{eq:dca-hyp:ci}
+\begin{align}
+	\xhat &= P\left(\omega_1R_1\inv y_1 + \sum_{i=1}^{\nx} \omega_{2,i} H_{2,i}\trnsp [D_2\inv]_{ii}[y_2]_i \right), \\
+	P &= \left(\omega_1R_1\inv + \sum_{i=1}^{\nx} \omega_{2,i} H_{2,i}\trnsp [D_2\inv]_{ii}H_{2,i} \right)\inv,
+\end{align}	
+\end{subequations}
+where $\omega_1,\omega_{2,i}\in[0,1]$, $\omega_1+\sum_{i=1}^{\nx}\omega_{2,i}=1$, and $H_{2,i} = \BBM \delta_{1i} & \dots & \delta_{\nx i} \EBM$. 
+
+The same technique can be applied to \abbrKF, which, for instance, is relevant if $y_1$ and $y_2$ are uncorrelated and Agent~1 receives $(y_2,D_2)$ from Agent~2. In that case
+\begin{subequations} \label{eq:dca-hyp:kf}
+\begin{align}
+	\xhat &= P\left(R_1\inv y_1 + \sum_{i=1}^{\nx} \omega_{2,i} H_{2,i}\trnsp [D_2\inv]_{ii}[y_2]_i \right), \\
+	P &= \left(R_1\inv + \sum_{i=1}^{\nx} \omega_{2,i} H_{2,i}\trnsp [D_2\inv]_{ii}H_{2,i} \right)\inv,
+\end{align}
+\end{subequations}
+where $\omega_{2,i}\in[0,1]$ and $\sum_{i=1}^{\nx}\omega_{2,i}=1$.
+
+
+
+
+
+
+
+% --- DR ---
+\section{Dimension-Reduction Using Eigenvalue Optimization}
+
+Another way to reduce the communicated data is to transmit \emph{dimension-reduced} (\abbrDR) estimates. This approach is used in this section and is based on \cite[Chapter~5]{Forsling2023Phd}.
+
+
+% REDUCING DIMENSIONALITY
+\subsection{Reducing Dimensionality}
+
+Assume $(y_1,R_1)$ and $(y_2,R_2)$ are according to
+\begin{align}
+	y_1 &= x+v_1, & R_1 &= \cov(\bfv_1), &
+	y_2 &= H_2x+v_2, & R_2 &= \cov(\bfv_2),
+	\label{eq:model:dr:two-estimates}
+\end{align}
+with $y_2\in\realsnb$ and $R_{12}=\cov(\bfv_1,\bfv_2)$. Assume \wolog that Agent~2 transmits its local estimate to Agent~1. If Agent~2 transmits $(y_2,R_2)$ to Agent~1, then $n_2(n_2+3)/2$ parameters must be exchanged. To reduce the communication load, Agent~2 can instead exchange $(\yM,\RM)$ defined as
+\begin{align}
+	\yM &= \M y_2, & \RM &= \M R_2\Mt,
+	\label{eq:model:dimred-estimate}
+\end{align} 
+where $\M\in\realsmnb$, $m<n_2$, and $\rank(\M)=m$. The cross-covariance $R_{1\M}=\cov(\bfv_1,\M\bfv_2)=R_{12}\Mt$. The operation in \eqref{eq:model:dimred-estimate} is essentially a linear transformation of $(y_2,R_2)$ from a $n_2$-dimensional space to a $m$-dimensional subspace. 
+
+
+% COMMUNICATION
+\subsection{Communication Considerations}
+
+This transformation requires that also $\M$ is exchanged. However, by coding\footnote{The message coding involves several technicalities which have been excluded from this report.} $(\yM,\RM,\M)$ as described in \cite[Section~5.1.4]{Forsling2023Phd}, the number of exchanged parameters can be reduced to $(2mn_2-m^2+3m)/2$. The communication reduction is illustrated in Figure~\ref{fig:dr:communication-gain} as a function of $\nb$ for different $m$. \abbrDCA is included for comparison.
+
+\begin{figure}[tb]
+	\centering
+	\begin{tikzpicture}[scale=1.1]
+		\input{fig/cha3/dr_communication_gain.tex}
+	\end{tikzpicture}
+	\caption{Illustration of the communication reduction as a function of $n_2$ when using \abbrDR for different values of $m$. \abbrDCA is included for comparison. }
+	\label{fig:dr:communication-gain}
+\end{figure}
+
+
+% FUSION OPTIMAL
+\subsection{Fusion Optimal Dimension Reduction}
+
+Reducing dimensionality using $\M$ can be done in an infinite number of ways. Here, we are interested in reducing dimensionality with a minimum performance loss. Let $(\xhat,P)$ be the result of fusing $(y_1,R_1)$ and $(\yM,\RM)$. In this context a \emph{fusion optimal} $\M\in\realsmnb$, denoted $\Mopt$, solves the problem
+\begin{equation}
+	\begin{aligned}
+		& \underset{\M}{\minimize} & & \trace(P).
+	\end{aligned}	
+	\label{eq:opt:dr:gevo}
+\end{equation}
+The covariance $P$ is specified by the particular track fusion method used. Hence, the optimal $\M$ depends on the track fusion method. Algorithms for dimension reduction tailored to specific fusion methods are provided below.
+
+
+% GEVO
+\subsubsection{The Generalized Eigenvalue Optimization Method}
+
+The framework for fusion optimal dimension reduction is denoted the \emph{generalized eigenvalue optimization} (\abbrGEVO) method since it boils down to a generalized eigenvalue problem. \abbrGEVO for \abbrKF, \abbrCI, and \abbrLE are given in Algorithm~\ref{alg:gevo-kf}, Algorithm~\ref{alg:gevo-ci}, and Algorithm~\ref{alg:gevo-le}, respectively. 
+
+
+% GEVOKF
+\begin{algorithm}[t]
+	\caption{\GEVOKF} 
+	\label{alg:gevo-kf}
+	\begin{small}
+	\begin{algorithmic}[0]
+		\Input $R_1\in\pdsetnx$, $R_2\in\pdsetnb$, $H_2\in\reals^{\nb\times\nx}$, and $m$ 
+		\begin{enumerate}
+			\item Let $Q = H_2R_1^2H_2\trnsp$ and $S = H_2R_1H_2\trnsp+R_2$. 
+			\item Compute $\lambda_1,\dots,\lambda_{\nb}$ and $u_1,\dots,u_{\nb}$ by solving $Qu = \lambda Su$.
+			\item Define $\Phi=\col(u_1\trnsp,\dots,u_m\trnsp)$, and compute $\Omega=\col(v_1\trnsp,\dots,v_m\trnsp)$ such that $v_i\trnsp v_j=\delta_{ij}$ and $\rowspan(\Omega)=\rowspan(\Phi)$.
+			\item Compute $\Omega R_2\Omega\trnsp = U\Sigma U\trnsp$ and let $\Mopt=U\trnsp\Omega$.
+		\end{enumerate}
+		\Output $\Mopt$
+	\end{algorithmic}
+	\end{small}
+\end{algorithm}
+
+
+% GEVOCI
+\begin{algorithm}[t]
+	\caption{\GEVOCI} 
+	\label{alg:gevo-ci}
+	\begin{small}
+	\begin{algorithmic}[0]
+		\Require $\omega_0$, $R_1\in\pdsetnx$, $R_2\in\pdsetnb$, $H_2\in\realsnbnx$, $m$, $k=0$, and $\epsilon$ \\
+		\begin{enumerate}
+			\item Let $k\leftarrow k+1$. Compute $\lambda_1,\dots,\lambda_{\nb}$ and $u_1,\dots,u_p$ by solving $Qu = \lambda Su$, where $Q = H_2R_1^2H_2\trnsp/\omega_{k-1}^2$ and $S = H_2R_1H_2\trnsp/\omega_{k-1}+R_2/(1-\omega_{k-1})$. Let $\Phi_k=\col(u_1\trnsp,\dots,u_{m}\trnsp)$, where $u_i$ is a generalized eigenvector associated with $\lambda_i$. 
+			\item Let $R_\Phi=\Phi_k R_2 \Phi_k\trnsp$. Compute $\omega_k$ by solving
+			\begin{equation*}
+				\underset{\omega}{\minimize}\quad \trace\left(\left(\omega R_1\inv + (1-\omega)H_2\trnsp \Phi_k\trnsp R_\Phi\inv \Phi_k H_2\right)\inv\right).
+			\end{equation*}
+			\item Let $J_k$ be according to \cite[(5.39)]{Forsling2023Phd}. If $(J_{k-1}-J_k)/J_k>\epsilon$, then go back to step~1. Otherwise continue to step~4.
+			\item Define $\Phi=\col(u_1\trnsp,\dots,u_m\trnsp)$, and compute $\Omega=\col(v_1\trnsp,\dots,v_m\trnsp)$ such that $v_i\trnsp v_j=\delta_{ij}$ and $\rowspan(\Omega)=\rowspan(\Phi)$.
+			\item Compute $\Omega R_2\Omega\trnsp = U\Sigma U\trnsp$ and let $\M=U\trnsp\Omega$.
+		\end{enumerate}
+		\Ensure $\M$
+	\end{algorithmic}
+	\end{small}
+\end{algorithm}
+
+
+% GEVOLE
+\begin{algorithm}[t]
+	\caption{\GEVOLE}
+	\label{alg:gevo-le}
+	\begin{small}
+	\begin{algorithmic}[0]
+		\Require $R_1\in\pdsetnx$, $R_2\in\pdsetnb$, $H_2\in\realsnbnx$, and $m$ \\
+		\begin{enumerate}
+			\item Transform into the information domain
+			\begin{align*}
+				\calI_1 &= R_1\inv, & \calI_2 &= H_2\trnsp R_2\inv H_2.
+			\end{align*}
+			\item Factorize $\calI_1=U_1\Sigma_1 U_1\trnsp$ and let $T_1=\Sigma_1^{-\frac{1}{2}} U_1\trnsp$. Factorize $T_1\calI_2T_1\trnsp=U_2\Sigma_2U_2\trnsp$ and let $T_2=U_2\trnsp$. Transform using $T=T_2T_1$ according to
+			\begin{align*}
+				\calI_1' &= T\calI_1T\trnsp = I, & \calI_2' &= T\calI_2T\trnsp.
+			\end{align*}
+			\item Let $D$ be diagonal. For each $i=1,\dots,\nx$ compute
+			\begin{equation*}
+				[D]_{ii} = \min\left( 1, [\calI_2']_{ii}  \right).
+			\end{equation*}
+			\item Let $\calI_\gamma = T\inv DT\invtrnsp$ and $R_{12} = R_1\calI_\gamma H_2\trnsp R_2$. Compute $\M$ using Algorithm~\ref{alg:gevo} with inputs $R_1$, $R_2$, $R_{12}$, $H_2$, and $m$.
+		\end{enumerate}
+		\Ensure $\M$
+	\end{algorithmic}
+	\end{small}
+\end{algorithm}
+
+
+
+% CIE
+\subsection{The Common Information Estimate}
+
+The \abbrGEVO framework requires that Agent~2 has access to $R_1$ when computing $\M$. This is not realistic in practice---Agent~2 will only have access to its local information but not to the local information of Agent~1. We will now see how we can replace $R_1$ by another quantity that can be computed locally at Agent~2. This quantity is referred to as the \emph{common information estimate} (\abbrCIE). It should be emphasized that \abbrCIE has the additional feature that it can be used to decorrelate estimates. This can be very useful in practice since it allows for simplified logic when it comes to dimension reduction and track fusion. 
+
+
+% COMPUTING CIE
+\subsubsection{Computing The Common Information Estimate}
+
+\begin{figure}[t]
+	\centering
+	\begin{tikzpicture}[scale=.52]
+		\input{fig/cha3/cie_filtering_scheme.tex}
+	\end{tikzpicture}
+	\caption{Schematics of the \abbrCIE methodology. Subscript 0 refers to initial values. Sensor information is used only in the measurement update (MU) of the local estimate. } 
+	\label{fig:cie:filtering-scheme}
+\end{figure}
+
+\abbrCIE is denoted by $(\gammahat,\Gamma)$ and is filtered in an \abbrEKF setting analogously to the local estimate $(\xhat,P)$. The local estimate is for now denoted by $(\xhat,P)$ instead of $(y_2,R_2)$. These estimates are computed as follows:
+\begin{itemize}
+	\item $(\xhat,P)$ is predicted at each time step and filtered with local measurements $(z,C)$, and fused with datalink estimates $(\yDL,\RDL)$ received from other agents.
+	\item $(\gammahat,\Gamma)$ is predicted at each time step, fused with (i) datalink estimates $(\yDL,\RDL)$ received from others, and (ii) locally computed \abbrDR estimates $(\yM,\RM)$ transmitted to other agents. 
+\end{itemize} 
+The same process model is assumed for both $(\xhat,P)$ and $(\gammahat,\Gamma)$. The process noise covariance $Q$ acts as a forgetting factor that ages previously exchanged information \cite{Forsling2020Fusion}. The larger $Q$ is, the faster previously exchanged information is forgotten.
+
+Schematics of the \abbrCIE is provided in Figure~\ref{fig:cie:filtering-scheme}, where only the computation of covariances is illustrated. It is suggested that $(\gammahat,\Gamma)$ is initialized at the same time as $(\xhat,P)$ using $\gammahat_0=\xhat_0$ while $\Gamma_0\succ P_0$ is chosen sufficiently large to be consistent with the fact that initially $\Gamma\inv$ is negligible. Initialization of $(\xhat,P)$ is done by any standard procedure from target tracking \cite{Blackman1999MTS}.
+
+
+% USAGE
+\subsubsection{Using The Common Information Estimate With \abbrGEVO}
+
+\begin{table}[tb] 
+	\centering
+	\caption{\abbrGEVO input mapping} 
+	\label{tab:cie:translation}
+	\begin{footnotesize}
+	\begin{tabular}{cccc}
+		\toprule%\midrule
+		\textbf{Method} & $R_1$ & $R_2$ & $\RM$ \\
+		\midrule
+		\GEVOKF & $\Gamma$ & $(P\inv-\Gamma\inv)\inv$ & $\M(P\inv-\Gamma\inv)\inv\Mt$ \\
+		\GEVOCI & $\Gamma$ & $P$ & $\M P\Mt$ \\
+		\GEVOLE & $\Gamma$ & $P$ & $\M P\Mt$ \\
+		\bottomrule
+	\end{tabular}
+	\end{footnotesize}
+\end{table}
+
+Utilizing $(\gammahat,\Gamma)$ in \GEVOCI and \GEVOLE is straighforward: $R_1$ is replaced by $\Gamma$ and $R_2$ by $P$. Then \GEVOCI or \GEVOLE is used. To be able to apply \GEVOKF, $(\xhat,P)$ and $(\gammahat,\Gamma)$ must first be decorrelated. This is accomplished by subtracting $(\gammahat,\Gamma)$ from $(\xhat,P)$. In particular, $R_1$ is replaced by $\Gamma$ and $R_2$ by $(P\inv-\Gamma\inv)\inv$, and then \GEVOKF is run. This decorrelation procedure is in practice very useful and is further analyzed in \cite[Section~5.4.1]{Forsling2023Phd}. Table~\ref{tab:cie:translation} summarizes the mapping between the quantities used in this section and the input variables of the different \abbrGEVO algorithms. 
+
+
+
+
+
+
+
+% --- SUMMARY ---
+\section{Summary}
+
+In this chapter we have dealt with communication constraints that might arise in network-centric operations. First we looked at the \abbrDCA framework which essentially is about preserving conservativeness under specific communication constraints where only the diagonal entries of covariance matrices are exchanged. We also discussed using \abbrDR estimates for communication reduction. To this end, the \abbrGEVO framework was proposed. Finally, the \abbrCIE was proposed as a resolution to the problem of only having access to local information when using \abbrGEVO. No numerical evaluations were included in this chapter, for this, see \cite[Chapter~5]{Forsling2023Phd}.
+
+
+
+

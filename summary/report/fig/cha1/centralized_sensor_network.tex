@@ -1,0 +1,17 @@
+
+\def\rf{1.5}
+\def\rs{1}
+
+\def\xf{0}
+\def\yf{0}
+
+
+% --- FIGURE ---
+\draw [white,opacity=.0] (-30,-5) rectangle (30,5);
+
+\foreach \x/\y in {-10/-11,2/-12,-18/-2,17/-5,20/-1,19/10,7/9,-9/12,-17/8,-19/3} {
+	\drawsensorarrow[shorten >=5] (\x,\y) -- (\xf,\yf);
+	\drawsensornode (\x,\y) circle [radius=\rs]; 
+}
+
+\drawprocessingunit{clra} (\xf,\yf) circle [radius=\rf];

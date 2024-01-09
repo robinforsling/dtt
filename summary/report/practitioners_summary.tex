@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{report}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+
+%\usepackage{rf-quick-setup}
+
+
+% --- DEFINITIONS ---
+\usepackage{def/mypackages}
+\usepackage{def/myenvironments}
+\usepackage{def/mygraphics}
+\usepackage{def/mycolors}
+\usepackage{def/myabbr}
+\usepackage{def/mymacros}
+
+
+
+
+% --- TITLE ---
+\date{}
+\title{ \textbf{The Bright Side of Decentralized Target Tracking} \\ A Thesis Summary Dedicated to the Practitioner}
+\author{Robin Forsling \\ \input{fig/front_page_cover.tex} }
+
+
+
+
+% --- BEGIN DOCUMENT ---
+\begin{document}
+
+
+
+
+% --- PRELIMINARIES ---
+\pagenumbering{roman}	
+\maketitle	
+\input{sec/preliminary_contents.tex}
+\tableofcontents
+\clearpage
+
+
+
+
+% --- SECTIONS ---
+\pagenumbering{arabic}
+\input{sec/introduction.tex}
+\input{sec/track_fusion_evaluation.tex}
+\input{sec/communication_management_design.tex}
+\input{sec/final_remarks.tex}
+	
+	
+	
+	
+% --- BIBLIOGRAPHY ---
+\bibliographystyle{IEEEtran}	
+\bibliography{bib/thesis_bibliography}	
+	
+	
+\end{document}

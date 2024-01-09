@@ -1,0 +1,73 @@
+
+% --- THEOREM STYLE ---
+\newtheorem{mytheorem}{Theorem}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{mylemma}{Lemma}
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem*{lemma*}{Lemma}
+\newtheorem{mycorollary}{Corollary}
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem*{corollary*}{Corollary}
+\newtheorem{myproposition}{Proposition}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem*{proposition*}{Proposition}
+
+
+
+% --- DEFINITION STYLE ---
+\theoremstyle{definition}
+\newtheorem{mydefinition}{Definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{myexample}{Example}
+\newtheorem{example}{Example}[chapter]
+
+
+
+% --- REMARK STYLE ---
+\newtheoremstyle{rfremark}% name of the style to be used
+{}% measure of space to leave above the theorem. E.g.: 3pt
+{}% measure of space to leave below the theorem. E.g.: 3pt
+{\small}% name of font to use in the body of the theorem
+{}% measure of space to indent
+{\bfseries}% name of head font
+{}% punctuation between head and body
+{ }% space after theorem head; " " = normal interword space
+{\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}.}
+
+\theoremstyle{remark}
+\newtheorem{myremark}{Remark}
+\newtheorem*{remark*}{Remark}
+\theoremstyle{rfremark}
+\newtheorem{remark}{Remark}[chapter]
+
+
+
+% --- SHARED COUNTER ---
+\theoremstyle{definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corrollary}
+\newtheorem{prop}[thm]{Proposition}
+\theoremstyle{definition}
+\newtheorem{dfn}[thm]{Definition}
+\theoremstyle{remark}
+\newtheorem{rmk}[thm]{Remark}
+
+
+
+% --- TCOLORBOX ---
+\tcbuselibrary{skins}
+
+\newtcolorbox{mybox}[1][]{skin=enhanced,colback=myorange!10!,colframe=myorange,coltitle=white,coltext=black,center title,fonttitle={\bfseries},#1}
+	
+\newtcolorbox{mytextbox}[1][]{skin=enhanced,
+	fontupper=\footnotesize,
+	before upper={\parindent10pt},
+	colback=gray!5!,
+	colframe=darkgray,
+	coltext=black,	
+	center title,
+	boxsep=1pt,left=2pt,right=2pt,top=0pt,bottom=2pt,
+	fonttitle={\bfseries},#1}
+	

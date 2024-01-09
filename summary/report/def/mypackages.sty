@@ -1,0 +1,80 @@
+
+\usepackage[T1]{fontenc}
+\usepackage[swedish,english]{babel}
+\usepackage{lmodern}
+
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+
+
+
+
+% --- GEOMETRY ---
+\usepackage[margin=3cm]{geometry}
+
+
+
+
+% --- BIB ---
+\usepackage[square, sort&compress, numbers]{natbib}
+	\renewcommand*\bibfont{\footnotesize} 
+\usepackage{bibentry}
+
+
+
+
+% --- TABLES, LISTINGS & TEXT BOXES ---	
+\usepackage{xcolor}
+\usepackage{listings}
+	\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+	%\lstset{framextopmargin=50pt,frame=bottomline}	
+\usepackage{listings}
+	\definecolor{matlabgreen}{RGB}{28,172,0}
+	\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+	%\lstset{framextopmargin=50pt,frame=bottomline}
+	\lstset{language=Matlab,%
+	    %basicstyle=\color{red},
+	    breaklines=true,%
+	    morekeywords={matlab2tikz},
+	    %keywordstyle=\color{blue},%
+	    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+	    identifierstyle=\color{black},%
+	    commentstyle=\color{matlabgreen},%
+	    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+	%    numbers=left,%
+	%    numberstyle={\tiny \color{black}},% size of the numbers
+	%    numbersep=9pt, % this defines how far the numbers are from the text
+	    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+	    %emph=[2]{word1,word2}, emphstyle=[2]{style},   
+	    escapechar={|}, 
+	}	
+	
+\usepackage{booktabs,enumerate,enumitem}
+\usepackage{tablefootnote} % threeparttable
+\usepackage{threeparttable}
+\usepackage{caption} %figurewithin=section
+	\captionsetup[figure]{name={Figure},font={small},labelfont={bf},labelsep=period} % labelfont={bf},
+	\captionsetup[table]{name={\textsc{Table}},font={small,sc},labelsep=newline}
+	\captionsetup[Listing]{name={Listing},font=small,labelsep=period} 
+	
+\usepackage{tcolorbox}
+\usepackage{multicol}	
+
+
+
+
+
+% --- ALG ---
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+	\algnewcommand\algorithmicinput{\textbf{Input:}}
+	\algnewcommand\Input{\item[\algorithmicinput]}
+	\algnewcommand\algorithmicoutput{\textbf{Output:}}
+	\algnewcommand\Output{\item[\algorithmicoutput]}	
+
+
+
+
+% --- MISC ---
+\usepackage{float,courier,textcomp,accents,lettrine}
+\RequirePackage{bm,xspace,url,hyperref}
+\RequirePackage[squaren]{SIunits}

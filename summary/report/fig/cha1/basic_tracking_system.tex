@@ -1,0 +1,13 @@
+
+
+% --- FIGURE ---
+\BFS
+
+\drawsensorbox (1,0) rectangle (3,1) node [pos=.5,color=white] {\bfseries sensor};
+\drawsystemarrow (3,0.5) -- (6,0.5) node [midway,above] {\emph{measurements}};
+\drawprocessingunitbox{clra!40!} (6,0) rectangle (9,1) node [pos=.5] {\bfseries processing unit};
+\drawsystemarrow (9,0.5) -- (12,0.5) node [midway,above] {\emph{tracks}};
+
+\node [right] at (12,0.5) {$\begin{cases} \text{human-machine interface} \\ \text{situational awareness} \\ \text{decision-making} \end{cases}$}; 
+
+\EFS

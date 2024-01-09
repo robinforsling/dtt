@@ -1,0 +1,67 @@
+
+\def\rf{1.5}
+\def\rs{1}
+
+\def\xf{0}
+\def\yf{0}
+
+\def\xfa{1}
+\def\yfa{-7}
+
+\def\xfb{-10}
+\def\yfb{-3}
+
+\def\xfc{-8}
+\def\yfc{11}
+
+\def\xfd{15}
+\def\yfd{9}
+
+\def\xfe{16}
+\def\yfe{-7}
+
+\def\xff{-8}
+\def\yff{-12}
+
+\def\shortenlength{5}
+
+
+
+% --- FIGURE ---
+\draw [white,opacity=.0] (-30,-5) rectangle (30,5);
+
+
+% Sensor nodes
+\foreach \x/\y in {-24/-3,-22/-6,-19/-9} {
+	\drawsensorarrow[shorten >=\shortenlength] (\x,\y) -- (\xfb,\yfb);
+	\drawsensornode (\x,\y) circle [radius=\rs]; }
+
+\foreach \x/\y in {-18/15} {
+	\drawsensorarrow[shorten >=\shortenlength] (\x,\y) -- (\xfc,\yfc);
+	\drawsensornode (\x,\y) circle [radius=\rs]; }
+
+\foreach \x/\y in {21/14} {
+	\drawsensorarrow[shorten >=\shortenlength] (\x,\y) -- (\xfd,\yfd);
+	\drawsensornode (\x,\y) circle [radius=\rs]; }
+
+\foreach \x/\y in {25/-6, 25/-9} {
+	\drawsensorarrow[shorten >=\shortenlength] (\x,\y) -- (\xfe,\yfe);
+	\drawsensornode (\x,\y) circle [radius=\rs]; }
+
+%\foreach \x/\y in {-15/-20} {
+%	\drawsensorarrow[shorten >=5] (\x,\y) -- (\xff,\yff);
+%	\drawsensornode (\x,\y) circle [radius=\rs]; }
+
+
+% Fusion nodes and communication lines
+\foreach \x/\y/\c in {\xfa/\yfa/clra,\xfb/\yfb/clrb,\xfc/\yfc/clrc,\xfd/\yfd/clrd,\xfe/\yfe/clre} {
+	\drawprocessingunit{\c} (\x,\y) circle [radius=\rf]; } % ,\xff/\yff/clrf
+
+\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfa,\yfa) -- (\xfb,\yfb);
+\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfa,\yfa) -- (\xfc,\yfc);
+\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfb,\yfb) -- (\xfc,\yfc);
+\drawcomarrow [->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfc,\yfc) -- (\xfd,\yfd);
+\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfd,\yfd) -- (\xfe,\yfe);
+%\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfe,\yfe) -- (\xff,\yff);
+\drawcomarrow [<-,shorten >=\shortenlength,shorten <=\shortenlength] (\xfa,\yfa) -- (\xfe,\yfe);
+%\drawcomarrow [<->,shorten >=\shortenlength,shorten <=\shortenlength] (\xfb,\yfb) -- (\xff,\yff);

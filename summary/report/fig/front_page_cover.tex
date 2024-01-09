@@ -1,0 +1,39 @@
+
+\begin{tikzpicture}[scale=.3]
+
+% DEFS
+\tikzfading[name=fader out,inner color=transparent!60,outer color=transparent!100]	
+
+\colorlet{clrfus}{black!90!}
+
+\def\lw{0.2mm}
+\def\l{5}
+\def\w{0.5}
+\def\d{0.01}
+
+
+
+% BOUNDING BOX
+\draw [white,opacity=0] (-17,-17) rectangle (17,25);
+
+
+% ELLIPSES
+\begin{scope}[scale=1]
+
+\fill[clrfus!20, path fading=fader out, draw=none] (0,0) circle [radius = 10];
+
+\foreach [count = \i] \c in {myred,myorange,myyellow!200!,mygreen,myblue,mypurple} {
+	\draw [\c,line width=\lw,opacity=.9,fill=\c,fill opacity=.05] (0,0) ellipse [x radius = 4, y radius = {16-\i*0}, rotate = {\i*30+15}];}
+
+\foreach \a in {.2,.3,...,7} {
+	\draw [clrfus,opacity=.5,line width=0.1mm] (0,0) ellipse [x radius = {\a/3}, y radius = \a, rotate = {\a*100}];}
+
+\foreach \r/\o in {4.5/.9,5.25/.7,6/.4,7/.2} {
+	\draw [clrfus,line width=0.2mm,opacity=\o] (0,0) circle [radius = \r];}
+
+\draw [clrfus,line width=0.5mm,opacity=.9] (0,0) circle [radius = 4];
+	
+\end{scope}	
+
+	
+\end{tikzpicture}

@@ -1,0 +1,90 @@
+
+\newcommand*\drawci{\draw[very thick,clrci]}
+\newcommand*\drawle{\draw[very thick,clrle]}
+\newcommand*\drawlkf{\draw[very thick,clrlkf]}
+\newcommand*\drawnkf{\draw[very thick,clrnaive,dotted]}
+
+\def\plotcommand{plot[smooth]coordinates}
+\def\plotcommandb{plot[]coordinates}
+
+\def\ks{1}
+\def\kend{19}
+\def\ymin{0}
+
+\def\xleg{2}
+\def\yleg{4.5}
+\def\lleg{1.5}
+\def\sleg{12}
+
+\def\xs{25cm}
+\def\ysa{-1.875cm}
+\def\ysb{-4cm}
+
+\def\addxlabel(#1){\node at (#1) {$k$};}
+\def\addxticks{\foreach \x in {4,8,...,16} {\drawxtick(\x,\ymin);\node [below] at (\x,\ymin) {\x};}}
+\def\addyticks{\foreach \y in {0.5,1.0,1.5,2.0,2.5,3.0,3.5} {\drawytick(\ks,\y);\node [left] at (\ks,\y) {\y};}}
+\def\drawframe{\drawcoordinateframe(\ks,\ymax)--(\ks,\ymin)--(\kend,\ymin);}
+
+\def\s{3.5};
+
+
+
+
+
+% --- FIGURE ---
+\BFS
+
+
+\addxlabel(10,-0.5)
+\addxlabel(35,-0.5)
+
+\def\ymin{0}; \def\ymax{4}
+
+
+% RMT:
+\draw[very thick,gray](\ks,1)--(\kend,1);
+\drawci\plotcommand{(2,1.677)(4,1.373)(6,1.437)(8,1.422)(10,1.371)(12,1.326)(14,1.310)(16,1.317)(18,1.331)};
+\drawle\plotcommand{(2,1.234)(4,1.032)(6,1.055)(8,1.038)(10,1.009)(12,0.989)(14,0.983)(16,0.988)(18,0.995)};
+\drawnkf\plotcommand{(2,1.166)(4,0.765)(6,0.696)(8,0.596)(10,0.485)(12,0.393)(14,0.335)(16,0.303)(18,0.284)};
+\drawlkf\plotcommand{(2,3.434)(4,2.876)(6,3.103)(8,3.276)(10,3.209)(12,3.007)(14,2.807)(16,2.660)(18,2.559)};
+
+\addxticks
+\addyticks
+\drawframe
+\node[rotate=90] at (-2,2) {RMT};
+
+
+% COIN:
+\begin{scope}[xshift=25cm]
+
+\draw[very thick,gray](\ks,1)--(\kend,1);
+\drawci\plotcommand{(2,0.520)(4,0.645)(6,0.572)(8,0.578)(10,0.633)(12,0.672)(14,0.692)(16,0.678)(18,0.650)};
+\drawle\plotcommand{(2,1.068)(4,0.990)(6,0.963)(8,1.018)(10,1.085)(12,1.097)(14,1.072)(16,1.038)(18,0.996)};
+\drawnkf\plotcommand{(2,1.131)(4,3.781)};
+\drawlkf\plotcommand{(2,1.131)(4,1.091)(6,1.022)(8,0.986)(10,0.993)(12,1.029)(14,1.043)(16,1.017)(18,0.978)};
+
+\addxticks
+\addyticks
+\drawframe
+\node[rotate=90] at (-2,2) {COIN};
+
+\end{scope}
+
+
+
+
+
+
+% LEGEND:
+\drawci({\xleg},\yleg)--({\xleg+\lleg},\yleg) node [right,black] {\abbrCI};
+\drawle ({\xleg+\sleg},\yleg)--({\xleg+\lleg+\sleg},\yleg) node [right,black] {\abbrLE};
+\drawnkf ({\xleg+2*\sleg},\yleg)--({\xleg+\lleg+2*\sleg},\yleg) node [right,black] {\abbrNKF};
+\drawlkf ({\xleg+3*\sleg},\yleg)--({\xleg+\lleg+3*\sleg},\yleg) node [right,black] {\abbrLKF};
+
+
+
+
+\EFS
+
+
+

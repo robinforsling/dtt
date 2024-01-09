@@ -41,7 +41,7 @@ switch scen_par.ID
 
     % --- SCENARIO 2: 2 AGENTS --------------------------------------------
     case 2
-        N = 18; q = 1;
+        N = 18; q = 4;
 
         traj = circle_arc_fixed_length_left([3000;8000],-pi/6,5000,4000,N);
         XT = traj.X; 

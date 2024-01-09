@@ -1,0 +1,32 @@
+
+\def\Riopt{[ultra thick,clrkf]}
+\def\Diopt{[ultra thick,dashed,clrkf]}
+\def\Dsiopt{[ultra thick,mydarkgreen]}
+
+\def\xleg{4}
+\def\yleg{0.45}
+\def\sleg{0.45}
+\def\lleg{0.4}
+
+
+
+
+% --- FIGURE ---
+\BFS
+
+
+\draw[white,opacity=0] (-6,-1) rectangle (6,1);
+
+\draw\Riopt (0,0) ellipse [x radius = 2.07, y radius = 0.83, rotate = -163.15];
+\draw\Diopt (0,0) ellipse [x radius = 2, y radius = 1];
+\draw\Dsiopt (0,0) ellipse [x radius = 2.82, y radius = 1.41];
+
+\draw\Riopt ({\xleg},{\yleg})--({\xleg+\lleg},{\yleg}) node [right,black] {$R_i$};
+\draw\Diopt ({\xleg},{\yleg-\sleg})--({\xleg+\lleg},{\yleg-\sleg}) node [right,black] {$D_i$};
+\draw\Dsiopt ({\xleg},{\yleg-2*\sleg})--({\xleg+\lleg},{\yleg-2*\sleg}) node [right,black] {$\Ds_i=2D_i$};
+
+\node at (0,0) {$\calE(R_i)\not\subseteq\calE(D_i)$};
+\node [left] at (-2.82,0) {$\calE(R_i)\subseteq\calE(\Ds_i)$};
+
+
+\EFS

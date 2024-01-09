@@ -1,0 +1,94 @@
+
+\def\rd{0.03}
+\def\s{2}
+
+\colorlet{clra}{gray} 
+\colorlet{clrb}{gray} 
+\colorlet{clrgevo}{black} 
+\colorlet{clrdl}{myblue}
+\colorlet{clrs}{black}
+
+\def\drawsbox{\draw[rounded corners,clrs,fill=clrs]}
+\def\drawdlbox{\draw[rounded corners,clrdl,fill=clrdl]}
+
+
+
+
+% --- FIGURE ---
+\begin{scriptsize}
+
+
+
+
+% Category boxes
+\draw [rounded corners,very thick,color=clra!50!,fill=clra!5!] (2.25,2) rectangle (20.0,-2.5);
+\draw [rounded corners,very thick,color=clrb!50!,fill=clrb!5!] (2.25,2.5) rectangle (20.0,7.5);
+\node at (2.25,-2.5) [above right] {\textcolor{clra}{local estimate}};
+\node at (2.25,7.5) [below right] {\textcolor{clrb}{\abbrCIE}};
+
+
+% DL and sensor	
+\drawsbox (-2.5,1) rectangle (0.0,2) node [pos=.5,white] {\textbf{sensor}};
+\drawdlbox (-2.5,2.5) rectangle (0.0,3.5) node [pos=.5,white] {\textbf{datalink}};
+
+
+% xhat,P
+\drawsystemarrow (0.0,1.5) -- (16,1.5) -- (16,1);
+\node at (0.0,1.5) [above right] {$C_{k+1}$};
+
+\drawsystemarrow[clrdl] (0.0,3.0) -- (5.8,3.0) to[out=0,in=90] (6,2.8) -- (6,1);
+\node at (0.0,3.0) [above right] {$\RDL_k$};
+
+\drawsystemarrow[dotted] (4,0.5) node [left] {$P_0$} -- (5,0.5);
+\drawsystembox (5,0) rectangle (7,1) node [pos=.5] {\textbf{fuse}};
+
+\drawsystemarrow (7,0.5) -- (10,0.5); 
+\node at (8.5,0.4) [above] {$P_{k|k}$};
+\drawsystembox (10,0) rectangle (12,1) node [pos=.5] {\textbf{TU}};
+
+\drawsystemarrow (12,0.5) -- (15,0.5);
+\node [above] at (13.5,0.4) {$P_{k+1|k}$};
+\drawsystembox (15,0) rectangle (17,1) node [pos=.5] {\textbf{MU}};
+
+\draw [fill=black] (18.5,0.5) ellipse [x radius = {\rd*\s}, y radius = {\rd*\s}];
+\drawsystemarrow (18.5,0.5) -- (18.5,-1.5) -- (12.0,-1.5);
+\drawsystembox (10,-2) rectangle (12.0,-1) node [pos=.5]{delay}; 
+
+\draw (10,-1.5) -- (6,-1.5) node [midway, above] {$P_{k|k}$}; 
+\drawsystemarrow (6,-1.5) -- (6,0);
+
+\drawsystemarrow (17,0.5) -- (21,0.5); 
+\node at (18.5,0.5) [above] {$P_{k+1|k+1}$};
+\draw [rounded corners,thick,color=clrgevo!100!,fill=clrgevo!0!] (21,0) rectangle (23,1) node [pos=.5] {\textbf{\textcolor{clrgevo}{\abbrGEVO}}}; 
+
+\drawsystemarrow (23,0.5) -- (25,0.5);
+\node at (24,0.5) [above right] {$(\RM,\M)$};
+
+
+% gamma,Gamma
+\drawsystemarrow[dotted] (4,4.0) node [left] {$\Gamma_0$} -- (5,4.0);
+\drawsystemarrow[clrdl] (5.8,3) to[out=0,in=-90] (6,3.2) -- (6,3.5);
+\drawsystembox (5,3.5) rectangle (7,4.5) node [pos=.5] {\textbf{fuse}};
+
+\drawsystemarrow (7,4) -- (10,4) node [midway, above] {$\Gamma_{k|k}$};
+\drawsystembox (10,3.5) rectangle (12,4.5) node [pos=.5] {\textbf{TU}};
+
+\drawsystemarrow (12,4) -- (22,4) -- (22,1); 
+\draw [fill=black] (18.5,4) ellipse [x radius = {\rd*\s}, y radius = {\rd*\s}];
+\node at (18.5,4) [below] {$\Gamma_{k+1|k}$};
+\drawsystemarrow (18.5,4) -- (18.5,6) -- (17.0,6);
+\drawsystembox (15,5.5) rectangle (17,6.5) node [pos=.5] {\textbf{fuse}};
+
+\drawsystemarrow (15,6) -- (12,6) node [midway,above] {$\Gamma_{k+1|k+1}$};
+\drawsystembox (10,5.5) rectangle (12.0,6.5) node [pos=.5] {delay}; 
+
+\draw (10,6) -- (6,6) node [midway,above] {$\Gamma_{k|k}$};
+\drawsystemarrow (6,6) -- (6,4.5);
+
+\drawsystemarrow (24,0.5) -- (24,7) -- (16,7) -- (16,6.5);
+\draw [fill=black] (24,0.5) ellipse [x radius = {\rd*\s}, y radius = {\rd*\s}];
+
+
+
+\end{scriptsize}
+

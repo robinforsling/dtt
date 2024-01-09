@@ -1,0 +1,45 @@
+
+\def\drawtrue{\draw[ultra thick,dashed,black]}
+\def\drawcons{\draw[ultra thick,mydarkgreen]}
+\def\drawnon{\draw[ultra thick,myred]}
+
+\def\Ptrue{(0,0)ellipse[x radius = 4, y radius = 1.5, rotate = 20];}
+
+\def\xleg{-5}
+\def\yleg{4.5}
+\def\lleg{1}
+\def\sleg{12}
+
+
+
+
+
+% --- FIGURE ---
+\BFS
+
+
+% LEFT
+\drawtrue\Ptrue
+\drawcons (0,0) ellipse [x radius = 5, y radius = 2, rotate = 25];
+\node at (0,0) {$P\succeq\EV(\tbfx\tbfx\trnsp)$};
+
+
+% RIGHT
+\begin{scope}[xshift=16cm]
+	
+\drawtrue\Ptrue
+\drawnon (0,0) ellipse [x radius = 5, y radius = 2, rotate = -25];	
+\node at (0,0) {$P^n\not\succeq\EV(\tbfx\tbfx\trnsp)$};
+	
+\end{scope}
+
+
+% LEGEND
+\drawcons({\xleg},\yleg)--({\xleg+\lleg},\yleg) node [right,black] {$P$};
+\drawtrue ({\xleg+\sleg},\yleg)--({\xleg+\lleg+\sleg},\yleg) node [right,black] {$\EV(\tbfx\tbfx\trnsp)$};
+\drawnon ({\xleg+2*\sleg},\yleg)--({\xleg+\lleg+2*\sleg},\yleg) node [right,black] {$P^n$};
+
+
+
+
+\EFS
