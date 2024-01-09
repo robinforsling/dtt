@@ -30,6 +30,10 @@ Comments about the source code:
 
 * It is possible to add new scenarios by modifying `src/thesis_lib/scenario/load_scen.m` 
 
+## Thesis Summary
+
+A summary of the thesis dedicated to system engineers and other practitioners is found in `summary/` 
+
 ## Thesis Figures
 
 All figures included in the thesis are available as pdf files in `figure/` 
