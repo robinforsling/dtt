@@ -1,18 +1,18 @@
 # Decentralized Target Tracking
 
-Source code, posters, and other material for the PhD thesis 
+This repository contains resources for the PhD thesis 
 
 > Robin Forsling, *The Dark Side of Decentralized Target Tracking: Unknown Correlations and Communication Constraints*, Linköping University, Linköping, Sweden, Dec. 2023.
 
 and related papers.
 
-The thesis is available here: https://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-199098
+The printed version of thesis is available here: https://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-199098
 
-## Paper Specific Material
+## Summary
 
-Material, e.g., source code, for specific papers is contained in `paper/` 
+A summary of the thesis dedicated to system engineers and other practitioners is found in `summary/`
 
-## Thesis Source Code
+## Source Code
 
 The thesis source code is written in Matlab and is contained in `src/`
 
@@ -30,16 +30,16 @@ Comments about the source code:
 
 * It is possible to add new scenarios by modifying `src/thesis_lib/scenario/load_scen.m` 
 
-## Thesis Summary
-
-A summary of the thesis dedicated to system engineers and other practitioners is found in `summary/` 
-
-## Thesis Figures
+## Figures
 
 All figures included in the thesis are available as pdf files in `figure/` 
 
 Note, some of the figures are under &copy; IEEE.
 
-## Thesis Posters
+## Paper Specific Material
+
+Material, e.g., source code, for specific papers is contained in `paper/`
+
+## Posters
 
 Posters related to the thesis are provided in `poster/` 
