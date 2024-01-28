@@ -7,4 +7,6 @@ function target = target_parameters(varargin)
 target.ID = [];
 target.pos = [];
 target.vel = [];
+target.acc = [];
 target.ori = [];
+target.traj = [];

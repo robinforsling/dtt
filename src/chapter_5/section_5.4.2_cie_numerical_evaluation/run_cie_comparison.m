@@ -1,4 +1,4 @@
-function data = run_cie_comparison(par,m_vec)
+function [out_par,data,crlb] = run_cie_comparison(par,m_vec)
 % --- run_cie_comparison() ------------------------------------------------
 % Comparison between using CIE and global knowledge.
 %
@@ -10,25 +10,16 @@ SEED = par.SEED;
 
 % --- INITIALIZE ---
 scen = load_scen(par); 
-nagents = scen.nagents; ntargets = scen.ntargets;
-
+nagents = scen.nagents; 
 itgt = 1;
 nm = length(m_vec);
 
-% GEVO
-data.rkf_loc = cell(nm,nagents); data.pkf_loc = data.rkf_loc; data.akf_loc = data.rkf_loc;  
-data.rkf_glob = cell(nm,nagents); data.pkf_glob = data.rkf_glob; data.akf_glob = data.rkf_glob;  
-
-data.rci_loc = cell(nm,nagents); data.pci_loc = data.rci_loc; data.aci_loc = data.rci_loc; 
-data.rci_glob = cell(nm,nagents); data.pci_glob = data.rci_glob; data.aci_glob = data.rci_glob;
-
-data.rle_loc = cell(nm,nagents); data.ple_loc = data.rle_loc; data.ale_loc = data.rle_loc; 
-data.rle_glob = cell(nm,nagents); data.ple_glob = data.rle_glob; data.ale_glob = data.rle_glob;
-
-% DCA
-data.rdeci = cell(1,nagents); data.pdeci = data.rdeci; data.adeci = data.rdeci;
-
-data.rlkf = cell(1,nagents); data.plkf = data.rlkf; data.alkf = data.rlkf; 
+data = cell(1,nagents);
+for ia = 1:nagents
+    data{ia}.kf = cell(nm,1);
+    data{ia}.ci = cell(nm,1);
+    data{ia}.le = cell(nm,1);
+end
 
 
 
@@ -51,8 +42,9 @@ for im = 1:nm
     rng(SEED)
     sim_out = simenv(par);    
     for ia = 1:nagents
-        [data.rkf_loc{im,ia},data.pkf_loc{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.akf_loc{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.kf{im}.loc = merge_structs(c,p);
     end
     
     % --- CI ---
@@ -63,8 +55,9 @@ for im = 1:nm
     rng(SEED) 
     sim_out = simenv(par);  
     for ia = 1:nagents
-        [data.rci_loc{im,ia},data.pci_loc{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.aci_loc{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.ci{im}.loc = merge_structs(c,p);
     end
 
     % --- LE ---
@@ -75,8 +68,9 @@ for im = 1:nm
     rng(SEED) 
     sim_out = simenv(par);  
     for ia = 1:nagents
-        [data.rle_loc{im,ia},data.ple_loc{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.ale_loc{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.le{im}.loc = merge_structs(c,p);
     end
 end
 
@@ -96,8 +90,9 @@ for im = 1:nm
     rng(SEED)
     sim_out = simenv(par);
     for ia = 1:nagents
-        [data.rkf_glob{im,ia},data.pkf_glob{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.akf_glob{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.kf{im}.glob = merge_structs(c,p);
     end
     
     % --- CI ---
@@ -108,8 +103,9 @@ for im = 1:nm
     rng(SEED) 
     sim_out = simenv(par); 
     for ia = 1:nagents
-        [data.rci_glob{im,ia},data.pci_glob{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.aci_glob{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.ci{im}.glob = merge_structs(c,p);
     end
 
     % --- LE ---
@@ -120,8 +116,9 @@ for im = 1:nm
     rng(SEED) 
     sim_out = simenv(par);  
     for ia = 1:nagents
-        [data.rle_glob{im,ia},data.ple_glob{im,ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia},p_idx);
-        [~,data.ale_glob{im,ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        data{ia}.le{im}.glob = merge_structs(c,p);
     end
 end
 
@@ -132,8 +129,9 @@ par.fus_method = def_fusion_method('ci');
 rng(SEED) 
 sim_out = simenv(par);
 for ia = 1:nagents
-    [data.rdeci{ia},data.pdeci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-    [~,data.adeci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+    X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+    c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+    data{ia}.dca = merge_structs(c,p);
 end
 
 fprintf('\n--- MISC ---\n')
@@ -147,28 +145,30 @@ par.cntrl.globally_known_est = 0;
 rng(SEED)
 sim_out = simenv(par);
 for ia = 1:nagents
-    [data.rlkf{ia},data.plkf{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-    [~,data.alkf{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+    X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+    c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+    data{ia}.lkf = merge_structs(c,p);
 end
 
 % --- CRLB ---
 fprintf('\nComputing CRLB...\n')
-nagents = sim_out.scen.nagents;
+nagents = sim_out.nagents;
 sm = cell(nagents,1);
 for ia = 1:nagents
-    sm{ia} = sim_out.scen.agents{ia}.sensor_model;
+    sm{ia} = sim_out.agents{ia}.sensor_model;
 end
-pm = sim_out.scen.agents{1}.process_model; 
-[data.PCRLB,data.pcrlb] = crlb(sim_out.scen.XT{itgt},sim_out.scen.XS,sm,pm); 
+pm = sim_out.agents{1}.process_model;   
+X = sim_out.targets{itgt}.X; 
+crlb = cramer_rao_lower_bound(X,sim_out.sensor_pos,sm,pm); 
 
 t_elapsed = toc(t_start); t_end_str = get_datetime;
 fprintf('\n\nSimulations started at %s\n',t_start_str)
 fprintf('Simulations finished at %s\n',t_end_str)
 fprintf('Elapsed time: %s\n',get_elapsed_time(t_elapsed))
 
-data.nx = size(sim_out.rec{1}.xhat{1},1);
-data.N = scen.par.N;
-data.M = length(sim_out.rec{1}.P);
+out_par.nx = size(sim_out.rec{1}.xhat{1},1);
+out_par.N = scen.par.N;
+out_par.M = length(sim_out.rec{1}.P);
 
 end
 

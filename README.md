@@ -30,13 +30,17 @@ Comments about the source code:
 
 * It is possible to add new scenarios by modifying `src/thesis_lib/scenario/load_scen.m` 
 
+## Bibliography
+
+A complete bibliography list of the thesis references is contained in `bib/` 
+
 ## Figures
 
 All figures included in the thesis are available as pdf files in `figure/` 
 
 Note, some of the figures are under &copy; IEEE.
 
-## Paper Specific Material
+## Paper
 
 Material, e.g., source code, for specific papers is contained in `paper/`
 

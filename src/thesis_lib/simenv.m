@@ -2,7 +2,7 @@ function out_data = simenv(scen_par)
 % --- simenv() ------------------------------------------------------------
 % Simulation environment for decentralized target tracking (DTT).
 %
-% 2023-10-30 Robin Forsling
+% 2024-01-18 Robin Forsling
 
 
 % --- SETUP SIM -----------------------------------------------------------
@@ -56,7 +56,9 @@ for imc = 1:M
     
         % Update targets
         for itgt = 1:ntargets
-            targets{itgt}.pos = scen.XT{itgt}(1:ncoord,k);
+            targets{itgt}.pos = scen.targets{itgt}.pos(:,k);
+            targets{itgt}.vel = scen.targets{itgt}.vel(:,k);
+            targets{itgt}.acc = scen.targets{itgt}.acc(:,k);
         end
 
         % Communication/network dynamics
@@ -131,7 +133,13 @@ for imc = 1:M
     if imc == k100; fprintf('    %s: 100%%\n',get_datetime); end
 end
 
-out_data.scen = scen;
+out_data.scen_par = scen.par;
+out_data.sensor_pos = scen.sensor_pos;
+out_data.dl = scen.dl;
+out_data.cntrl = scen.cntrl;
+out_data.nagents = nagents;
+out_data.ntargets = ntargets;
 out_data.agents = agents;
+out_data.targets = scen.targets;
 out_data.rec = data;
 

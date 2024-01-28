@@ -19,16 +19,19 @@ if nprim >= 1
     for k = 2:nprim
         temp = motion_prim{k}; N = temp.N;
         if size(temp.X,1) ~= ncoord; error('merge_motion_primitives: incompatible motion primitives...'); end
-        dL = norm(par.X(:,end)-temp.X(:,1));                        % Difference between last point in current primitive and first point in the next primitive
-        if dL == 0
+        dL = norm(par.X(1:2,end)-temp.X(1:2,1));                            % Position difference between last point in current primitive and first point in the next primitive
+        if dL <= 1e-3
+            K = par.N;
             par.X = [par.X temp.X(:,2:N)]; par.head = [par.head temp.head(:,2:N)]; 
+            par.X(3:4,K) = (par.X(3:4,K-1)+par.X(3:4,K+1))/2;
+            par.X(5:6,K) = (par.X(5:6,K-1)+par.X(5:6,K+1))/2;
             par.L = par.L + temp.L; par.Ld = par.Ld + temp.Ld;
         else
             par.X = [par.X temp.X]; par.head = [par.head temp.head]; 
             par.L = par.L + temp.L + dL; par.Ld = par.Ld + temp.Ld + dL;
         end
+        par.N = size(par.X,2);
     end
-    par.N = size(par.X,2);
 end
 
 end

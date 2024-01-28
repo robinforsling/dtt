@@ -1,4 +1,4 @@
-function [PCRLB,varargout] = crlb(XT,XS,sm,pm)
+function [PCRLB,varargout] = crlb(X,sensor_pos,sm,pm)
 % --- crlb() --------------------------------------------------------------
 % Computes Cramer-Rao lower bound based on input model:
 %   sm = sensor model
@@ -16,13 +16,13 @@ a_max = pm.a_max;
 m = sm{1}.m;
 Hc = zeros(m,nx-m);
 
-N = size(XT,2);
+N = size(X,2);
 
 
 % --- INIT ---
 Pi = zeros(m);
 for i = 1:nsensors
-    xrel = XT(:,1)-XS{i};
+    xrel = X(1:d,1)-sensor_pos{i};
     H = sm{i}.J(xrel);
     Pi = Pi + H'/sm{i}.R*H;
 end
@@ -37,7 +37,7 @@ for k = 2:N
     P = F*P*F' + Q;
     Pi = inv(P);
     for i = 1:nsensors
-        xrel = XT(:,k)-XS{i};
+        xrel = X(1:d,k)-sensor_pos{i};
         H = [sm{i}.J(xrel) Hc];
         Pi = Pi + H'/sm{i}.R*H;
     end

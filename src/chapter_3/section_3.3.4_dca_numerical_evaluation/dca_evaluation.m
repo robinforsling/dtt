@@ -2,7 +2,7 @@ function dca_evaluation
 % --- dca_evaluation() ----------------------------------------------------
 % Section 3.3.4 Numerical Evaluation - DCA: Figure 3.11
 %
-% 2023-10-30 Robin Forsling
+% 2024-01-16 Robin Forsling
 
 set_latex_interpreter;
 
@@ -28,24 +28,9 @@ par.M = 10;
 
 % --- SIMULATIONS ---
 scen = load_scen(par); 
-nagents = scen.nagents; ntargets = scen.ntargets;
-
-itgt = 1; itgt = min([itgt ntargets]);
-
-if CI_ON 
-    rdeci = cell(1,nagents); pdeci = rdeci; adeci = rdeci; 
-    rdoci = cell(1,nagents); pdoci = rdoci; adoci = rdeci;
-    rddci = cell(1,nagents); pddci = rddci; addci = rddci;
-    rdhci = cell(1,nagents); pdhci = rdhci; adhci = rdhci;
-end
-
-if FULL_ON
-    if KF_ON; rfkf = cell(1,nagents); pfkf = rfkf; afkf = rfkf; end
-    if CI_ON; rfci = cell(1,nagents); pfci = rfci; afci = rfci; end
-end
-
-if LKF_ON; rlkf = cell(1,nagents); plkf = rlkf; alkf = rlkf; end
-if NKF_ON; rnkf = cell(1,nagents); pnkf = rnkf; ankf = rnkf; end
+nagents = scen.nagents;
+itgt = 1; 
+eval_res = cell(1,nagents);
 
 fprintf('\n\nSimulations starting at %s\n',get_datetime)
 fprintf('\n--- DCA ---\n')
@@ -64,8 +49,9 @@ if CI_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [rdeci{ia},pdeci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,adeci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.deci = merge_structs(c,p);
     end
 
     % DCA-OPT
@@ -76,8 +62,9 @@ if CI_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [rdoci{ia},pdoci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,adoci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.doci = merge_structs(c,p);
     end
 
     % DCA-DOM
@@ -88,8 +75,9 @@ if CI_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [rddci{ia},pddci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,addci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.ddci = merge_structs(c,p);
     end
 
     % DCA-HYP
@@ -100,8 +88,9 @@ if CI_ON
     sim_out = simenv(par); 
     
     for ia = 1:nagents
-        [rdhci{ia},pdhci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,adhci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.dhci = merge_structs(c,p);
     end
 end
     
@@ -118,8 +107,9 @@ if FULL_ON
         sim_out = simenv(par);
 
         for ia = 1:nagents
-            [rfci{ia},pfci{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-            [~,afci{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+            X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+            c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+            eval_res{ia}.fci = merge_structs(c,p);
         end
     end
 end
@@ -135,8 +125,9 @@ if NKF_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [rnkf{ia},pnkf{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,ankf{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.nkf = merge_structs(c,p);
     end
 end
 
@@ -151,23 +142,21 @@ if LKF_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [rlkf{ia},plkf{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,alkf{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        X = sim_out.targets{itgt}.X; rec = sim_out.rec{ia};
+        c = credibility_assessment(X,rec); p = performance_assessment(X,rec);
+        eval_res{ia}.lkf = merge_structs(c,p);
     end
 end
 
 % --- CRLB ---
 if CRLB_ON
     fprintf('\nComputing CRLB...\n')
-    nagents = sim_out.scen.nagents;
+    nagents = sim_out.nagents;
     sm = cell(nagents,1);
-    for i = 1:nagents
-        sm{i} = sim_out.scen.agents{i}.sensor_model;
-    end
-    pm = sim_out.scen.agents{1}.process_model;
-    pm.q = pm.q; % :D
-    
-    [PCRLB,pcrlb] = crlb(sim_out.scen.XT{itgt},sim_out.scen.XS,sm,pm); 
+    for i = 1:nagents; sm{i} = sim_out.agents{i}.sensor_model; end
+    pm = sim_out.agents{1}.process_model; pm.q = pm.q; % :D    
+    X = sim_out.targets{itgt}.X; 
+    crlb = cramer_rao_lower_bound(X,sim_out.sensor_pos,sm,pm); 
 end
 
 fprintf('\nSimulations finished at %s\n',get_datetime)
@@ -175,7 +164,7 @@ fprintf('\nSimulations finished at %s\n',get_datetime)
 
 
 
-% --- PLOT ---
+%% --- PLOT ---
 nrow = 3;
 ncol = nagents;
 
@@ -187,38 +176,35 @@ anees_ci = anees_confidence_interval(n,M);
 
 N = scen.par.N; t = 1:N;
 idx = 1:1:N;
-lw = 1.5;
-lwb = 2.0;
-lwf = 2.0;
+
+lw = 1.5; lwb = 2.0; lwf = 2.0;
 clr = get_thesis_colors;
-clrde = clr.orange;
-clrdo = clr.darkyellow; 
-clrdd = clr.green;
-clrdh = clr.blue;
-clrf = clr.purple;
-clr.lkf = clr.darkgray;
+clrde = clr.orange; clrdo = clr.darkyellow; clrdd = clr.green;
+clrdh = clr.blue; clrf = clr.purple; clr.lkf = clr.darkgray;
 
 
 figure(1);clf
 for ia = 1:nagents
 
+    res = eval_res{ia};
+
 
     % --- RMT ---
     subplot(nrow,ncol,ia); hold on
 
-    if CRLB_ON; h = plot(t(2:end),c*pcrlb(2:end),'k-','DisplayName','CRLB'); h.LineWidth = lwb; end
-    if LKF_ON; h = plot(t(idx),c*plkf{ia}(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
-    if NKF_ON; h = plot(t(idx),c*pnkf{ia}(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
+    if CRLB_ON; h = plot(t(2:end),c*crlb.glob.rt.pos(2:end),'k-','DisplayName','CRLB'); h.LineWidth = lwb; end
+    if LKF_ON; h = plot(t(idx),c*res.lkf.rmt.pos(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
+    if NKF_ON; h = plot(t(idx),c*res.nkf.rmt.pos(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
     
     if CI_ON
-        h = plot(t(idx),c*pdeci{ia}(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde;
-        h = plot(t(idx),c*pdoci{ia}(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
-        h = plot(t(idx),c*pddci{ia}(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
-        h = plot(t(idx),c*pdhci{ia}(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
-        if FULL_ON; h = plot(t(idx),c*pfci{ia}(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
+        h = plot(t(idx),c*res.deci.rmt.pos(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde;
+        h = plot(t(idx),c*res.doci.rmt.pos(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
+        h = plot(t(idx),c*res.ddci.rmt.pos(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
+        h = plot(t(idx),c*res.dhci.rmt.pos(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
+        if FULL_ON; h = plot(t(idx),c*res.fci.rmt.pos(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
     end
 
-    ylim([0 c*plkf{ia}(1)])
+    ylim([0 c*res.lkf.rmt.pos(1)])
     xlabel('$k$','interpreter','latex'); 
     ylabel('RMT$/\sigma_r$','interpreter','latex')
     title(sprintf('Agent %d',ia))
@@ -229,19 +215,19 @@ for ia = 1:nagents
     % --- RMSE ---
     subplot(nrow,ncol,ia+ncol); hold on
 
-    if CRLB_ON; h = plot(t(2:end),c*pcrlb(2:end),'k-','DisplayName','CRLB'); h.LineWidth = lwb; end
-    if LKF_ON; h = plot(t(idx),c*rlkf{ia}(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
-    if NKF_ON; h = plot(t(idx),c*rnkf{ia}(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
+    if CRLB_ON; h = plot(t(2:end),c*crlb.glob.rt.pos(2:end),'k-','DisplayName','CRLB'); h.LineWidth = lwb; end
+    if LKF_ON; h = plot(t(idx),c*res.lkf.rmse.pos(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
+    if NKF_ON; h = plot(t(idx),c*res.nkf.rmse.pos(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
     
     if CI_ON
-        h = plot(t(idx),c*rdeci{ia}(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde;
-        h = plot(t(idx),c*rdoci{ia}(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
-        h = plot(t(idx),c*rddci{ia}(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
-        h = plot(t(idx),c*rdhci{ia}(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
-        if FULL_ON; h = plot(t(idx),c*rfci{ia}(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
+        h = plot(t(idx),c*res.deci.rmse.pos(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde;
+        h = plot(t(idx),c*res.doci.rmse.pos(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
+        h = plot(t(idx),c*res.ddci.rmse.pos(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
+        h = plot(t(idx),c*res.dhci.rmse.pos(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
+        if FULL_ON; h = plot(t(idx),c*res.fci.rmse.pos(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
     end
 
-    ylim([0 c*rlkf{ia}(1)])
+    ylim([0 c*res.lkf.rmse.pos(1)])
     xlabel('$k$','interpreter','latex'); 
     ylabel('RMSE$/\sigma_r$','interpreter','latex')
     box on
@@ -254,15 +240,15 @@ for ia = 1:nagents
     h = plot(t(idx),anees_ci.lvl999(1)*ones(1,length(idx)),'k--'); turn_legend_item_off(h);
     h = plot(t(idx),anees_ci.lvl999(2)*ones(1,length(idx)),'k--','DisplayName','99\% conf. int.'); 
 
-    if LKF_ON; h = plot(t(idx),alkf{ia}(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
-    if NKF_ON; h = plot(t(idx),ankf{ia}(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
+    if LKF_ON; h = plot(t(idx),res.lkf.anees(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; end
+    if NKF_ON; h = plot(t(idx),res.nkf.anees(idx),'k:','DisplayName','NKF'); h.Color = clr.naive; h.LineWidth = lwb; end
 
     if CI_ON
-        h = plot(t(idx),adeci{ia}(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde; 
-        h = plot(t(idx),adoci{ia}(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
-        h = plot(t(idx),addci{ia}(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
-        h = plot(t(idx),adhci{ia}(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
-        if FULL_ON; h = plot(t(idx),afci{ia}(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
+        h = plot(t(idx),res.deci.anees(idx),'-','DisplayName','DCA-EIG-CI'); h.LineWidth = lw; h.Color = clrde; 
+        h = plot(t(idx),res.doci.anees(idx),'-','DisplayName','DCA-OPT-CI'); h.LineWidth = lw; h.Color = clrdo;
+        h = plot(t(idx),res.ddci.anees(idx),'-','DisplayName','DCA-DOM-CI'); h.LineWidth = lw; h.Color = clrdd;
+        h = plot(t(idx),res.dhci.anees(idx),'-','DisplayName','DCA-HYP-CI'); h.LineWidth = lw; h.Color = clrdh;
+        if FULL_ON; h = plot(t(idx),res.fci.anees(idx),'--','DisplayName','FULL-CI'); h.LineWidth = lwf; h.Color = clrf; end
     end
 
     ylim([0.25 2.25])

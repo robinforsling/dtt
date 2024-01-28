@@ -2,7 +2,7 @@ function scen = load_scen(scen_par)
 % --- load_scen() ---------------------------------------------------------
 % Loads requested scenario. Additional scenarios are specified below.
 %
-% 2023-10-30 Robin Forsling
+% 2024-01-18 Robin Forsling
 
 
 % --- DEFAULTS ------------------------------------------------------------
@@ -17,8 +17,7 @@ switch scen_par.ID
     case 1
         N = 18; q = 2;
 
-        traj = circle_arc_fixed_length_left([3000;8000],-pi/6,5000,4000,N);
-        XT = traj.X; 
+        tgt_traj = circle_arc_fixed_length_left([3000;8000],-pi/6,5000,4000,N);
         
         XS = cell(nagents,1); 
         XS{1} = [-2000;1000]; XS{2} = [5000;0]; 
@@ -31,20 +30,16 @@ switch scen_par.ID
         dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
-            kin_par.XT = XT; kin_par.XS = XS{i};
             sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az); sm.pos = XS{i};
             agents{i} = create_single_target_tracker(pm,sm);
         end
-        
-        targets = target_parameters;
-  
+
 
     % --- SCENARIO 2: 2 AGENTS --------------------------------------------
     case 2
         N = 18; q = 4;
 
-        traj = circle_arc_fixed_length_left([3000;8000],-pi/6,5000,4000,N);
-        XT = traj.X; 
+        tgt_traj = circle_arc_fixed_length_left([3000;8000],-pi/6,5000,4000,N);
         
         XS = cell(nagents,1); 
         XS{1} = [-2000;1000]; XS{2} = [5000;0]; 
@@ -57,20 +52,16 @@ switch scen_par.ID
         dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
-            kin_par.XT = XT; kin_par.XS = XS{i};
             sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az); sm.pos = XS{i};
             agents{i} = create_single_target_tracker(pm,sm);
         end
-        
-        targets = target_parameters;
 
 
     % --- SCENARIO 3 ------------------------------------------------------
     case 3
         N = 12; q = 1;
 
-        traj = circle_arc_fixed_length_left([3000;7000],-pi/6,10000,4000,N);
-        XT = traj.X; 
+        tgt_traj = circle_arc_fixed_length_left([3000;7000],-pi/6,10000,4000,N);
         
         XS = cell(nagents,1); 
         XS{1} = [-4000;8000]; XS{2} = [2500;-1000]; 
@@ -83,20 +74,16 @@ switch scen_par.ID
         dl.schedule = basic_communication_schedule(nagents,N);
 
         for i = 1:nagents
-            kin_par.XT = XT; kin_par.XS = XS{i};
             sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az); sm.pos = XS{i};
             agents{i} = create_single_target_tracker(pm,sm);
         end
-        
-        targets = target_parameters;
 
 
     % --- SCENARIO 4 ------------------------------------------------------
     case 4
         N = 20; nagents = 3; Ts = 1; q = 5;
 
-        traj = circle_arc_fixed_length_right([8000;8000],pi/6,3000,3000,N);
-        XT = traj.X; 
+        tgt_traj = circle_arc_fixed_length_right([8000;8000],pi/6,3000,3000,N);
         
         XS = cell(nagents,1); 
         XS{1} = [0;6000]; XS{2} = [1000;0]; XS{3} = [0;10000];
@@ -111,20 +98,16 @@ switch scen_par.ID
         sigma = [1000 3*d2r ; 1000 3*d2r ; 1000 0.75*d2r];
 
         for i = 1:nagents
-            kin_par.XT = XT; kin_par.XS = XS{i};
             sm = sensor_model_spherical([],sigma(i,1),sigma(i,2)); sm.pos = XS{i};
             agents{i} = create_single_target_tracker(pm,sm);
         end
-        
-        targets = target_parameters;
 
 
     % --- SCENARIO 5: 4 AGENTS --------------------------------------------
     case 5
         N = 40; nagents = 4; Ts = 1; q = 5;
 
-        traj = circle_arc_fixed_length_left([3000;5000],-pi/12,6000,4000,N);
-        XT = traj.X; 
+        tgt_traj = circle_arc_fixed_length_left([3000;5000],-pi/12,6000,4000,N);
         
         XS = cell(nagents,1); 
         XS{1} = [-1000;10000]; XS{2} = [0;0]; XS{3} = [15000;1000]; XS{4} = [5000;15000];
@@ -137,33 +120,88 @@ switch scen_par.ID
         %dl.schedule = zeros(ns,N); for i = 1:ns; dl.schedule(1:4:N+(i-1)) = 1; end
 
         for i = 1:nagents
-            kin_par.XT = XT; kin_par.XS = XS{i};
             sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az); sm.pos = XS{i};
-            pm_upd = update_process_model_params(pm,'q',q,'Ts',Ts);
-            agents{i} = create_single_target_tracker(pm_upd,sm);
+            agents{i} = create_single_target_tracker(pm,sm);
         end
-        
-        targets = get_target_params;
 
+
+    % --- SCENARIO 10: NEES MATRIX APPLICATION ----------------------------   
+    case 10
+        nagents = 2; agents = cell(nagents,1);
+        Ts = 1; 
+
+        XS = cell(nagents,1); XS{1} = [-2000;1000]; XS{2} = [5000;0]; 
+        a = straight_segment_fixed_length([1000;6000],-2*pi/5,200,3,Ts); 
+        b = circle_arc_fixed_length_left(a,2000,1000,11,Ts);
+        c = straight_segment_fixed_length(b,200,3,Ts);
+        d = circle_arc_fixed_length_right(c,6000,1000,11,Ts);
+        tgt_traj = merge_motion_primitives(a,b,c,d);
+        %tgt_traj = straight_segment_fixed_length([3000;5000],-pi/12,4000,40,Ts);
+        N = tgt_traj.N; 
+
+        pm.Ts = Ts; pm.model_type = 'cv';  pm.q = scen_par.q;
+        pm = process_model_linear(pm);
+        pm.v_max = 200; pm.a_max = 5; 
+        sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az);
+
+        dl.topology = [0 1 ; 1 0];
+        dl.schedule = zeros(nagents,N); %basic_communication_schedule(nagents,N);
+
+        for i = 1:nagents
+            sm.pos = XS{i};
+            agents{i} = create_single_target_tracker(pm,sm);
+        end
+
+
+    % --- SCENARIO 11: NEES MATRIX APPLICATION ----------------------------   
+    case 11
+        nagents = 2; agents = cell(nagents,1);
+        Ts = 1; 
+
+        XS = cell(nagents,1); XS{1} = [-3000;1000]; XS{2} = [5000;0]; 
+        tgt_traj = circle_arc_fixed_length_left([2000;6000],-2*pi/3,5000,3000,31,Ts); 
+        N = tgt_traj.N; 
+
+        pm.Ts = Ts; pm.model_type = 'cv';  pm.q = scen_par.q;
+        pm = process_model_linear(pm);
+        pm.v_max = 100; pm.a_max = 3; 
+        sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az);
+
+        dl.topology = [0 1 ; 1 0];
+        dl.schedule = basic_communication_schedule(nagents,N);
+
+        for i = 1:nagents
+            sm.pos = XS{i};
+            agents{i} = create_single_target_tracker(pm,sm);
+        end
 
     otherwise 
         error('load_scen: unknown scenario ID')
 
 end
 
+if ~iscell(tgt_traj); tgt_traj = {tgt_traj}; end
+ntargets = length(tgt_traj);
+targets = cell(ntargets,1);
+for itgt = 1:ntargets
+    targets{itgt} = target_parameters;
+    targets{itgt}.ID = 1;
+    targets{itgt}.X = tgt_traj{itgt}.X;
+    targets{itgt}.pos = tgt_traj{itgt}.X(1:2,:);
+    targets{itgt}.vel = tgt_traj{itgt}.X(3:4,:);
+    targets{itgt}.acc = tgt_traj{itgt}.X(5:6,:);
+    targets{itgt}.ori = tgt_traj{itgt}.head;
+end
+
 
 % --- PACK DATA -----------------------------------------------------------
-if ~iscell(XT); XT = {XT}; end
-if ~iscell(targets); targets = {targets}; end
-
 scen.par.ID = scen_par.ID;
 scen.par.M = scen_par.M;
 scen.par.N = N;
 scen.par.Ts = Ts;
 scen.par.ncoord = scen_par.ncoord;
-scen.XT = XT;
-scen.XS = XS;
-scen.ntargets = length(XT);
+scen.sensor_pos = XS;
+scen.ntargets = ntargets;
 scen.nagents = length(agents);
 scen.targets = targets;
 scen.agents = agents;

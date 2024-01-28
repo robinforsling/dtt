@@ -7,7 +7,7 @@ function cie_evaluation()
 set_latex_interpreter;
 
 
-% --- PARAMETERS ---
+% --- PARAMETERS ----------------------------------------------------------
 m_vec = [1 2];
 
 par = default_simulation_parameters;
@@ -20,24 +20,24 @@ par.SEED = round(10000*rand);
 itgt = 1;
 
 
-% --- RUN COMPARISON ---
-data = run_cie_comparison(par,m_vec);
+% --- RUN COMPARISON ------------------------------------------------------
+[data_par,data,crlb] = run_cie_comparison(par,m_vec);
 
 scen = load_scen(par);
 fprintf('\n--- AGENT PARAMETERS ---\n')
 fprintf('r\t sr\t saz\t r*saz/sr\n')
-for i = 1:length(scen.XS)
+for i = 1:length(scen.sensor_pos)
     R = scen.agents{i}.sensor_model.R;
     sr = sqrt(R(1,1));
     saz = sqrt(R(2,2));
-    xrel = scen.XT{itgt}(:,1)-scen.XS{i};
+    xrel = scen.targets{itgt}.X(1:2,1)-scen.sensor_pos{i};
     ri = norm(xrel);
     fprintf('%4.0f\t %d\t %2.4f\t %2.5f \n',ri,sr,saz,ri*saz/sr)
 end
 fprintf('\n')
 
 
-% --- PLOT ---
+% --- PLOT ----------------------------------------------------------------
 ia = 1;
 nm = length(m_vec);
 
@@ -48,17 +48,19 @@ clr = get_thesis_colors;
 clrdkf = clr.darkyellow;
 clrde = clr.orange;
 
-nx = data.nx; M = data.M;
+nx = data_par.nx; M = data_par.M;
 anees_ci = anees_confidence_interval(nx,M);
 
-N = data.N; t = 0:N-1; t = t+1;
+N = data_par.N; t = 0:N-1; t = t+1;
 idx = 2:2:N;
 if ri*saz > sr; c = 1/(ri*saz); else; c = 1/sr; end
 %c = 1/par.sigma_r;
 xlimits = [1 19];
 
+res = data{ia};
 
-% FIGURE
+
+% --- FIGURE ---
 figure(1);clf
 
 
@@ -66,9 +68,9 @@ figure(1);clf
 subplot(2,2,1); hold on
 
 for im = 1:nm
-    h = plot(t(idx),data.pkf_loc{im,ia}(idx)./data.pkf_glob{im,ia}(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
-    h = plot(t(idx),data.pci_loc{im,ia}(idx)./data.pci_glob{im,ia}(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
-    h = plot(t(idx),data.ple_loc{im,ia}(idx)./data.ple_glob{im,ia}(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
+    h = plot(t(idx),res.kf{im}.loc.rmt.pos(idx)./res.kf{im}.glob.rmt.pos(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
+    h = plot(t(idx),res.ci{im}.loc.rmt.pos(idx)./res.ci{im}.glob.rmt.pos(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
+    h = plot(t(idx),res.le{im}.loc.rmt.pos(idx)./res.le{im}.glob.rmt.pos(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
 end 
 
 ylim([0.95 1.1]); xlim(xlimits)
@@ -81,14 +83,14 @@ subplot(2,2,2); hold on
 
 h = plot(t(idx),anees_ci.lvl99(1)*ones(1,length(idx)),'k--'); turn_legend_item_off(h);
 hconfint = plot(t(idx),anees_ci.lvl99(2)*ones(1,length(idx)),'k--'); 
-h = plot(t(idx),data.alkf{ia}(idx),'k-'); h.Color = clr.lkf; h.LineWidth = lwb;
+h = plot(t(idx),res.lkf.anees(idx),'k-'); h.Color = clr.lkf; h.LineWidth = lwb;
 
 for im = 1:nm
-    h = plot(t(idx),data.akf_loc{im,ia}(idx),'-'); set_h(h,clrdkf,ls_vec{im},lw);
-    h = plot(t(idx),data.aci_loc{im,ia}(idx),'-'); set_h(h,clr.ci,ls_vec{im},lw);
-    h = plot(t(idx),data.ale_loc{im,ia}(idx),'-'); set_h(h,clr.le,ls_vec{im},lw);
+    h = plot(t(idx),res.kf{im}.loc.anees(idx),'-'); set_h(h,clrdkf,ls_vec{im},lw);
+    h = plot(t(idx),res.kf{im}.loc.anees(idx),'-'); set_h(h,clr.ci,ls_vec{im},lw);
+    h = plot(t(idx),res.kf{im}.loc.anees(idx),'-'); set_h(h,clr.le,ls_vec{im},lw);
 end 
-h = plot(t(idx),data.adeci{ia}(idx),'-','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
+h = plot(t(idx),res.dca.anees(idx),'-','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
 
 ylim([0 2]); xlim(xlimits)
 xlabel('$k$','interpreter','latex'); ylabel('ANEES','interpreter','latex')
@@ -99,14 +101,14 @@ box on
 % RMT
 subplot(2,2,3); hold on
 
-h = plot(t(idx),c*data.pcrlb(idx),'k-','DisplayName','CRLB'); h.LineWidth = lwb;
-h = plot(t(idx),c*data.plkf{ia}(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; 
+h = plot(t(idx),c*crlb.glob.rt.pos(idx),'k-','DisplayName','CRLB'); h.LineWidth = lwb;
+h = plot(t(idx),c*res.lkf.rmt.pos(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; 
 for im = 1:nm
-    h = plot(t(idx),c*data.pkf_loc{im,ia}(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
-    h = plot(t(idx),c*data.pci_loc{im,ia}(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
-    h = plot(t(idx),c*data.ple_loc{im,ia}(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
+    h = plot(t(idx),c*res.kf{im}.loc.rmt.pos(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
+    h = plot(t(idx),c*res.ci{im}.loc.rmt.pos(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
+    h = plot(t(idx),c*res.le{im}.loc.rmt.pos(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
 end 
-h = plot(t(idx),c*data.pdeci{ia}(idx),'--','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
+h = plot(t(idx),c*res.dca.rmt.pos(idx),'--','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
 
 ylim([0.0 1.0]); xlim(xlimits)
 xlabel('$k$','interpreter','latex'); ylabel('RMT/$\sigma$','interpreter','latex')
@@ -116,14 +118,14 @@ box on
 % RMSE
 subplot(2,2,4); hold on
 
-h = plot(t(idx),c*data.pcrlb(idx),'k-','DisplayName','CRLB'); h.LineWidth = lwb;
-h = plot(t(idx),c*data.rlkf{ia}(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; 
+h = plot(t(idx),c*crlb.glob.rt.pos(idx),'k-','DisplayName','CRLB'); h.LineWidth = lwb;
+h = plot(t(idx),c*res.lkf.rmse.pos(idx),'k-','DisplayName','LKF'); h.Color = clr.lkf; h.LineWidth = lwb; 
 for im = 1:nm
-    h = plot(t(idx),c*data.rkf_loc{im,ia}(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
-    h = plot(t(idx),c*data.rci_loc{im,ia}(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
-    h = plot(t(idx),c*data.rle_loc{im,ia}(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
+    h = plot(t(idx),c*res.kf{im}.loc.rmse.pos(idx),'-','DisplayName',sprintf('dKF $m = %d$',m_vec(im))); set_h(h,clrdkf,ls_vec{im},lw);
+    h = plot(t(idx),c*res.ci{im}.loc.rmse.pos(idx),'-','DisplayName',sprintf('CI $m = %d$',m_vec(im))); set_h(h,clr.ci,ls_vec{im},lw);
+    h = plot(t(idx),c*res.le{im}.loc.rmse.pos(idx),'-','DisplayName',sprintf('LE $m = %d$',m_vec(im))); set_h(h,clr.le,ls_vec{im},lw);
 end 
-h = plot(t(idx),c*data.rdeci{ia}(idx),'-','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
+h = plot(t(idx),c*res.dca.rmse.pos(idx),'-','DisplayName','DCA-EIG'); set_h(h,clrde,'--',lwdca);
 
 ylim([0.0 1.0]); xlim(xlimits)
 xlabel('$k$','interpreter','latex'); ylabel('RMSE/$\sigma$','interpreter','latex')

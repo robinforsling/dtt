@@ -6,6 +6,8 @@ function track_fusion_design
 % "The Bright Side of Decentralized Target Tracking: A Thesis Summary 
 % Dedicated to the Practitioner"
 %
+% Requirements: src/thesis_lib
+%
 % 2024-01-08 Robin Forsling
 
 set_latex_interpreter;

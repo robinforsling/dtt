@@ -28,7 +28,7 @@ end
 % Check discretized length
 L_discrete = 0;
 for k = 2:par.N
-    L_discrete = L_discrete + norm(par.X(:,k)-par.X(:,k-1));
+    L_discrete = L_discrete + norm(par.X(1:2,k)-par.X(1:2,k-1));
 end
 
 if abs((par.Ld-L_discrete)/par.Ld) > Ld_tol
@@ -37,7 +37,7 @@ end
 
 % Check length L
 if par.Ld > par.L
-    is_valid = 0;return;
+    is_valid = 0; return;
 end
 
 
