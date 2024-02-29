@@ -12,6 +12,8 @@
 *.snm
 *.toc
 *.tpbuild
+*.fdb_latexmk
+*.fls
 *~
 
 /auto/
