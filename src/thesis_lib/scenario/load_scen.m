@@ -9,7 +9,7 @@ function scen = load_scen(scen_par)
 Ts = 1;
 q = 1;
 nagents = 2;
-
+N = [];
 
 switch scen_par.ID
 
@@ -137,7 +137,6 @@ switch scen_par.ID
         d = circle_arc_fixed_length_right(c,6000,1000,11,Ts);
         tgt_traj = merge_motion_primitives(a,b,c,d);
         %tgt_traj = straight_segment_fixed_length([3000;5000],-pi/12,4000,40,Ts);
-        N = tgt_traj.N; 
 
         pm.Ts = Ts; pm.model_type = 'cv';  pm.q = scen_par.q;
         pm = process_model_linear(pm);
@@ -153,14 +152,14 @@ switch scen_par.ID
         end
 
 
-    % --- SCENARIO 11: NEES MATRIX APPLICATION ----------------------------   
+    % --- SCENARIO 11: NEES MATRIX APPLICATION ---------------------------- 
+    % Filter tuning and track fusion design
     case 11
         nagents = 2; agents = cell(nagents,1);
         Ts = 1; 
 
         XS = cell(nagents,1); XS{1} = [-3000;1000]; XS{2} = [5000;0]; 
         tgt_traj = circle_arc_fixed_length_left([2000;6000],-2*pi/3,5000,3000,31,Ts); 
-        N = tgt_traj.N; 
 
         pm.Ts = Ts; pm.model_type = 'cv';  pm.q = scen_par.q;
         pm = process_model_linear(pm);
@@ -174,6 +173,23 @@ switch scen_par.ID
             sm.pos = XS{i};
             agents{i} = create_single_target_tracker(pm,sm);
         end
+
+    % --- SCENARIO 12: NIS MATRIX APPLICATION -----------------------------
+    % Target maneuver detection
+    case 12 
+        nagents = 1; agents = cell(nagents,1);
+        Ts = 1;
+
+        XS = cell(nagents,1); XS{1} = [0;0];
+        pm.Ts = Ts; pm.model_type = 'cv'; pm.q = scen_par.q;
+        pm.v_max = 100; pm.a_max = 3; 
+        sm = sensor_model_spherical([],scen_par.sigma_r,scen_par.sigma_az);
+
+        a = straight_segment_fixed_length([10000;10000],5*pi/4,1000,11,Ts); 
+        b = circle_arc_fixed_length_left(a,500,1000,11,Ts);
+        tgt_traj = merge_motion_primitives(a,b);
+
+
 
     otherwise 
         error('load_scen: unknown scenario ID')
@@ -192,6 +208,8 @@ for itgt = 1:ntargets
     targets{itgt}.acc = tgt_traj{itgt}.X(5:6,:);
     targets{itgt}.ori = tgt_traj{itgt}.head;
 end
+
+if isempty(N); N = tgt_traj{1}.N; end
 
 
 % --- PACK DATA -----------------------------------------------------------

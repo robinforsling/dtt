@@ -62,12 +62,13 @@ for imc = 1:M
         end
 
         % Communication/network dynamics
-        dl_schedule = scen.dl.schedule;
-        if ndims(scen.dl.topology) == 3; dl_topology = scen.dl.topology(:,:,k);
-        else; dl_topology = scen.dl.topology;
+        if nagents > 1
+            dl_schedule = scen.dl.schedule;
+            if ndims(scen.dl.topology) == 3; dl_topology = scen.dl.topology(:,:,k);
+            else; dl_topology = scen.dl.topology;
+            end
+            if sum(diag(dl_topology)) > 0; error('error in dl topology...'); end
         end
-        if sum(diag(dl_topology)) > 0; error('error in dl topology...'); end
-        %dl_schedule = sum(dl_topology,2); dl_schedule(dl_schedule > 0) = 1;
 
         % Simulation control parameters
         cntrl = simulation_control_parameters;
