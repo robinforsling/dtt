@@ -58,8 +58,8 @@ if CI_ON
     sim_out = simenv(par);
 
     for ia = 1:nagents
-        [~,CI.rmt{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,~,CI.coin{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        [~,CI.rmt{ia}] = rmse(sim_out.targets{itgt}.X,sim_out.rec{ia});
+        [~,~,CI.coin{ia}] = nees(sim_out.targets{itgt}.X,sim_out.rec{ia});
     end
 end
 
@@ -71,8 +71,8 @@ if LE_ON
     sim_out = simenv(par);
 
     for ia = 1:nagents
-        [~,LE.rmt{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,~,LE.coin{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        [~,LE.rmt{ia}] = rmse(sim_out.targets{itgt}.X,sim_out.rec{ia});
+        [~,~,LE.coin{ia}] = nees(sim_out.targets{itgt}.X,sim_out.rec{ia});
     end
 end
 
@@ -84,8 +84,8 @@ if NKF_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [~,NKF.rmt{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,~,NKF.coin{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        [~,NKF.rmt{ia}] = rmse(sim_out.targets{itgt}.X,sim_out.rec{ia});
+        [~,~,NKF.coin{ia}] = nees(sim_out.targets{itgt}.X,sim_out.rec{ia});
     end
 end
 
@@ -99,23 +99,23 @@ if LKF_ON
     sim_out = simenv(par);
     
     for ia = 1:nagents
-        [~,LKF.rmt{ia}] = rmse(sim_out.scen.XT{itgt},sim_out.rec{ia});
-        [~,~,LKF.coin{ia}] = nees(sim_out.scen.XT{itgt},sim_out.rec{ia});
+        [~,LKF.rmt{ia}] = rmse(sim_out.targets{itgt}.X,sim_out.rec{ia});
+        [~,~,LKF.coin{ia}] = nees(sim_out.targets{itgt}.X,sim_out.rec{ia});
     end
 end
 
 % --- CRLB ---
 if CRLB_ON
     fprintf('\nComputing CRLB...\n')
-    nagents = sim_out.scen.nagents;
+    nagents = sim_out.nagents;
     sm = cell(nagents,1);
     for i = 1:nagents
-        sm{i} = sim_out.scen.agents{i}.sensor_model;
+        sm{i} = sim_out.agents{i}.sensor_model;
     end
-    pm = sim_out.scen.agents{1}.process_model;
+    pm = sim_out.agents{1}.process_model;
     pm.q = pm.q; % :D
-    
-    [PCRLB,pcrlb] = crlb(sim_out.scen.XT{itgt},sim_out.scen.XS,sm,pm); 
+
+    [PCRLB,pcrlb] = crlb(sim_out.targets{itgt}.X,sim_out.sensor_pos,sm,pm); 
 end
 
 fprintf('\nSimulations finished at %s\n',get_datetime)
