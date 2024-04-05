@@ -37,7 +37,7 @@
     % \and
     % AI \& Tactical Autonomy, Advanced Program, Saab Aeronautics
 }
-\date[]{Speaker's Corner 2024-04-05 %\\
+\date[]{%Speaker's Corner 2024-04-05 %\\
 % \begin{tikzpicture}
 %     \draw[white](0,0)circle[radius=2];
 % \end{tikzpicture}
@@ -90,8 +90,6 @@
 % --- INTRODUCTION ---
 \section{Introduction}
 
-%\subsection[Motivation]{Motivation}
-
 
 % Summary
 \begin{frame}{Introduction}
@@ -104,12 +102,6 @@
         \item Industrial PhD student at Automatic Control, ISY, LiU between 2018--2023
         \item Main supervisor: Fredrik Gustafsson
         \item Research topic: Target tracking in decentralized sensor networks
-        % \item Key words:
-        % \begin{itemize}
-        %     \item distributed target tracking
-        %     \item sensor/data/track fusion
-        %     \item network-centric operations
-        % \end{itemize}
     \end{itemize}
 \end{column}
 
@@ -127,15 +119,6 @@
 \end{frame}
 
 
-% INTENTIONALLY LEFT BLANK
-% \begin{frame}{}
-%
-% \begin{center}
-%     \emph{Intentionally left blank}
-% \end{center}
-%
-% \end{frame}
-
 % TARGET TRACKING
 \begin{frame}{A Target Tracking Problem}
 
@@ -149,8 +132,6 @@
         \caption*{Multitarget tracking scene with measurements over multiple time instants}
     \end{figure}
 \end{column}
-
-\pause
 
 \begin{column}{.45\textwidth}
     \begin{figure}
@@ -279,9 +260,6 @@
     \item \matlab source code and thesis summary
 \end{itemize}
 
-%\makebox[.5\linewidth]{\rule{\paperwidth}{0.4pt}}
-
-\pause
 \vspace{0.5em}
 
 \begin{rfshadedcolorbox}[title={Outline}]{darkgray}
@@ -320,8 +298,6 @@
     \centering
     \includegraphics[width=.6\textwidth]{figure3-1_decentralized_single-target_tracking_scenario}
 \end{figure}
-
-%\pause
 
 \vspace{1em}
 
@@ -363,7 +339,6 @@ where $R_i$ is the covariance of the noise $v_i$
 
 In this presentation $H_i=I$ is assumed for simplicity, \ie, $y_i\in\realsnx$
 
-%\pause
 \vspace{1em}
 
 \alert{linear model, but not necessarily Cartesian!}
@@ -417,8 +392,6 @@ Optimal fusion given that $R_{12}=0$:
     \xhat &= P\left(R_1\inv y_1 + R_2\inv y_2  \right) &
     P &= \left(R_1\inv + R_2\inv \right)\inv
 \end{align*}
-
-%\pause
 
 \vspace{1em}
 
@@ -515,8 +488,6 @@ where $\omega\in[0,1]$ is computed by solving
 \end{equation*}
 \end{rfshadedcolorbox}
 
-\pause
-
 \vspace{1em}
 
 Similar in structure to the naive fusion method:
@@ -585,8 +556,6 @@ An estimate at the \ith \abbrMC run at time $k$ is denoted $(\xhat_k^i,P_k^i)$
     \item requires the true state to be known --- \alert{cannot be computed online}
 \end{itemize}
 
-\pause
-
 \vspace{1em}
 
 \begin{rfshadedcolorbox}[title={Root Mean Trace}]{darkgray}
@@ -628,8 +597,6 @@ $\lambdamax(A)$ denotes the largest eigenvalue of a matrix $A$
     \end{equation*}
     where $L_k^i(L_k^i)\trnsp=P_k^i$, $\xtilde_k^i$ is the error in the \ith \abbrMC run, and $\calC_k$ is the sampled normalized estimation error squared matrix
 \end{rfshadedcolorbox}
-
-\pause
 
 \vspace{1em}
 
@@ -678,10 +645,10 @@ $\lambdamax(A)$ denotes the largest eigenvalue of a matrix $A$
     \includegraphics[width=.6\textwidth]{figure3-2_decentralized_single-target_tracking_system}
 \end{figure}
 
-\textbf{Two main approaches:}
+\textbf{Two methodologies:}
 \begin{itemize}
     \item diagonal covariance approximation (\abbrDCA)
-    \item dimension-reduction (\abbrDR)
+    \item dimension reduction (\abbrDR)
 \end{itemize}
 
 \end{frame}
@@ -696,12 +663,10 @@ $\lambdamax(A)$ denotes the largest eigenvalue of a matrix $A$
     \item limited communication capacity: the data $(y_2,R_2)$ must be reduced
 \end{itemize}
 
-%\pause
 \vspace{1em}
 
 \textbf{Observation:} $y_i$ scales as $\nx$ and $R_i$ as $\nx^2$
 
-%\pause
 \vspace{1em}
 
 \textbf{Simple solution:} exchange $(y_2,D_2)$ where $D_2$ is diagonal --- essentially an $\nx$-dimensional vector
@@ -753,7 +718,6 @@ Two options are considered:
     \end{equation*}
 \end{rfshadedcolorbox}
 
-%\pause
 \vspace{1em}
 
 The solution is
@@ -778,9 +742,6 @@ Agent~1 receives $(y_2,D_2)$ from Agent~2
         \input{fig/example_hyperrectangle_enclosing.tex}
     \end{tikzpicture}
 \end{figure}
-
-%\pause
-%\vspace{1em}
 
 The parametrization given by
 \begin{equation*}
@@ -852,7 +813,6 @@ Let $\ndca$, $\ndr$, and $\nfull$ denote the number of parameters to be transmit
 
 \begin{figure}
     \centering
-    %\includegraphics[width=.95\textwidth]{figure5-1_dr_communication_reduction}
     \begin{tikzpicture}
         \input{fig/cm_communication_gain.tex}
     \end{tikzpicture}
@@ -875,7 +835,6 @@ Let $\ndca$, $\ndr$, and $\nfull$ denote the number of parameters to be transmit
     \item the \abbrCLUE framework
     \item common information estimate --- keeping track of network common information
     \item practical and theoretical aspects related to the data reduction techniques
-%    \item $\cdots$
 \end{itemize}
 
 \vskip0pt plus.5fill
