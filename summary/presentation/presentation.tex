@@ -1,0 +1,896 @@
+
+\documentclass[aspectratio=1610]{beamer}
+
+\usepackage{def/mypres}
+
+
+% --- SETUP THEME ---
+\mode<presentation>{
+    \usetheme{metropolis}
+    \setbeamercovered{invisible} %transparent
+}
+
+\usecolortheme{seahorse}
+
+\setbeamercolor{title}{fg=black!2!,bg=black}
+\setbeamercolor{title separator}{fg=black!2}
+
+%\metroset{background=dark}
+\setbeamercolor{normal text}{fg=black!2,bg=rfbg}
+\usebeamercolor[fg]{normal text}
+
+%\setsansfont{Latin Modern Roman}
+%\setmonofont{Latin Modern Roman}
+
+
+
+
+
+
+
+% --- META ---
+\title[Decentralized Target Tracking]{\Large The Dark Side of Decentralized Target Tracking}
+\subtitle{\normalsize Unknown Correlations and Communication Constraints} % (optional)
+\author{Robin Forsling}
+\institute[]{%\inst{1}%
+    % Automatic Control, ISY, Linköping University
+    % \and
+    % AI \& Tactical Autonomy, Advanced Program, Saab Aeronautics
+}
+\date[]{%Speaker's Corner 2024-04-05 %\\
+% \begin{tikzpicture}
+%     \draw[white](0,0)circle[radius=2];
+% \end{tikzpicture}
+}
+\subject{dtt}
+
+
+
+%\pgfdeclareimage[height=1.0cm]{university-logo}{fig/liu_eng/LiU_primary_black.png}
+%\logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]{
+    \begin{frame}<beamer>{Outline}
+        \tableofcontents[currentsection,currentsubsection]
+    \end{frame}
+}
+
+
+
+
+% --- BEGIN DOCUMENT ---
+\begin{document}
+
+
+
+% TITLE PAGE
+\thispagestyle{empty}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\setbeamercolor{normal text}{fg=rfbg,bg=black!2}
+\usebeamercolor[fg]{normal text}
+
+
+% OUTLINE PAGE
+\addtocounter{framenumber}{-1}
+% \begin{frame}{Outline}
+%     \tableofcontents % You might wish to add the option [pausesections]
+% \end{frame}
+
+
+
+
+
+% --- INTRODUCTION ---
+\section{Introduction}
+
+%\subsection[Motivation]{Motivation}
+
+
+% Summary
+\begin{frame}{Introduction}
+
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+    \begin{itemize}
+        \item Started at Saab 2016
+        \item Industrial PhD student at Automatic Control, ISY, LiU between 2018--2023
+        \item Main supervisor: Fredrik Gustafsson
+        \item Research topic: Target tracking in decentralized sensor networks
+        % \item Key words:
+        % \begin{itemize}
+        %     \item distributed target tracking
+        %     \item sensor/data/track fusion
+        %     \item network-centric operations
+        % \end{itemize}
+    \end{itemize}
+\end{column}
+
+\begin{column}{.5\textwidth}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\textwidth]{figure1-4_network-centric_battle_scene}
+    \end{figure}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+% INTENTIONALLY LEFT BLANK
+% \begin{frame}{}
+%
+% \begin{center}
+%     \emph{Intentionally left blank}
+% \end{center}
+%
+% \end{frame}
+
+% TARGET TRACKING
+\begin{frame}{A Target Tracking Problem}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+    \vspace{-3em}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.77\textwidth]{figure1-1a_target_tracking_scene}
+        \caption*{Multitarget tracking scene with measurements over multiple time instants}
+    \end{figure}
+\end{column}
+
+\pause
+
+\begin{column}{.45\textwidth}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.6\textwidth]{figure1-1b_target_tracking_scene_results}
+        \caption*{Refined picture using target tracking algorithms}
+    \end{figure}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+% BASIC TARGET TRACKING SYSTEM
+\begin{frame}{Basic Target Tracking System}
+
+\begin{center}
+    \includegraphics[width=.95\textwidth]{figure1-2_basic_target_tracking_system}
+\end{center}
+
+\end{frame}
+
+
+% THE GREATER PICTURE
+\begin{frame}{The Big Picture}
+
+\begin{columns}
+
+\begin{column}{.4\textwidth}
+\begin{itemize}
+    \item network-centric operations
+    \item heterogenous agents: \emph{ships}, \emph{aircraft}, \emph{ground vehicles} etc
+    \item asymmetric capabilities
+    \item distributed sensors
+    \item information exchange
+\end{itemize}
+\end{column}
+
+\begin{column}{.6\textwidth}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\textwidth]{figure1-4_network-centric_battle_scene}
+    \end{figure}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+% SENSOR NETWORKS
+\begin{frame}{Sensor Network Architectures}
+
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+    \begin{center}\textbf{Centralized sensor network}\end{center}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.65\textwidth]{figure1-3a_centralized_sensor_network}
+    \end{figure}
+    \begin{center}
+        \begin{itemize}
+            \item possible optimal performance
+            \item critical nodes, high complexity
+        \end{itemize}
+    \end{center}
+\end{column}
+
+\begin{column}{.5\textwidth}
+    \begin{center}\textbf{Decentralized sensor network}\end{center}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.8\textwidth]{figure1-3b_decentralized_sensor_network}
+    \end{figure}
+    \begin{center}
+        \begin{itemize}
+            \item robust, modular, flexible
+            \item dependencies (correlations)
+        \end{itemize}
+    \end{center}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+% DECENTRALIZED TARGET TRACKING SYSTEM
+\begin{frame}{Decentralized Target Tracking: System Perspective}
+
+\begin{center}
+    \includegraphics[width=.9\textwidth]{figure1-5_decentralized_target_tracking_system}
+\end{center}
+
+\end{frame}
+
+
+% RESEARCH QUESTIONS
+\begin{frame}{Research Problem}
+
+\textbf{Two subproblems}
+\begin{enumerate}
+    \item robust \alert{track fusion} under unknown correlations
+    \item efficient usage of the  \alert{communication resource}
+\end{enumerate}
+
+\vspace{1em}
+
+\begin{center}
+    \includegraphics[width=.75\textwidth]{figure1-5_decentralized_target_tracking_system}
+\end{center}
+
+\end{frame}
+
+
+% OUTLINE
+\begin{frame}{Outline}
+
+% \begin{small}
+%
+% \textbf{Resources:} \alert{\url{https://github.com/robinforsling/dtt/}}
+% \begin{itemize}
+%     \item \matlab source code and thesis summary
+% \end{itemize}
+%
+% %\makebox[.5\linewidth]{\rule{\paperwidth}{0.4pt}}
+%
+% \pause
+% \vspace{0.5em}
+%
+% \begin{rfshadedcolorbox}[title={Outline}]{darkgray}
+
+\textbf{Part I:} Track fusion design and evaluation
+\begin{itemize}
+    \item track fusion methods
+    \item evaluation measures and analysis
+\end{itemize}
+
+\textbf{Part II:} Decentralized target tracking under communication constraints
+\begin{itemize}
+    \item two frameworks for reducing the communication load
+\end{itemize}
+
+% \end{rfshadedcolorbox}
+% \end{small}
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+% --- TACK FUSION DESIGN ---
+\section{Part I: Track Fusion Design and Evaluation}
+
+% DSTT
+\begin{frame}{Decentralized Single-Target Tracking }
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.6\textwidth]{figure3-1_decentralized_single-target_tracking_scenario}
+\end{figure}
+
+%\pause
+
+\vspace{1em}
+
+\begin{figure}
+    \includegraphics[width=.6\textwidth]{figure3-2_decentralized_single-target_tracking_system}
+\end{figure}
+
+\end{frame}
+
+
+% NOTATION
+\begin{frame}{Notation}
+
+\begin{itemize}
+    \item $x\in\realsnx$: target state to be estimated
+    \item $I$: identity matrix
+    \item $A\trnsp$: transpose of matrix (or vector) $A$
+    \item $A\inv$: inverse of matrix $A$
+    \item $A\succeq0$: $A$ is symmetric positive semidefinite
+    \item $A\succ0$: $A$ is symmetric positive definite
+    \item $\EV(\bfa)$: expected value of $\bfa$
+    \item $\cov(\bfa)$: covariance (matrix) of $\bfa$
+\end{itemize}
+
+\end{frame}
+
+
+% ESTIMATE MODEL
+\begin{frame}{Estimate Model}
+
+By $(y_i,R_i)$ we denote the local estimate/track in \ith agent, model as
+\begin{align*}
+    y_i &= H_i x + v_i &
+    R_i &= \cov(\bfv_i)
+\end{align*}
+where $R_i$ is the covariance of the noise $v_i$
+
+\vspace{1em}
+
+In this presentation $H_i=I$ is assumed for simplicity, \ie, $y_i\in\realsnx$
+
+%\pause
+\vspace{1em}
+
+\alert{linear model, but not necessarily Cartesian!}
+
+\end{frame}
+
+
+% TF: OPTIMAL
+\begin{frame}{Track Fusion: Optimal Method}
+
+Consider:
+\begin{itemize}
+    \item $(y_1,R_1)$ and $(y_2,R_2)$ are to be fused
+    \item $R_{12}=R_{21}\trnsp=\cov(\bfy_1,\bfy_2)$ is the cross-covariance between the estimates
+\end{itemize}
+
+An optimal fusion method is given by:
+\begin{align*}
+    \xhat &= K_1y_1 + K_2y_2 &
+    P &= R_1 - K_2SK_2\trnsp
+\end{align*}
+where $K_1=I-K_2$, $K_2=(R_1-R_{12})S\inv$, and $S=R_1+R_2-R_{12}-R_{12}\trnsp$
+
+\end{frame}
+
+
+% TF: DSN
+\begin{frame}{Track Fusion: Decentralized Sensor Networks}
+
+Why not use the optimal fusion method? \alert{$R_{12}$ is unknown!}
+
+\vspace{2em}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.25\textheight]{figure3-5_tracking_correlations}
+\end{figure}
+
+\end{frame}
+
+
+% TF: NAIVE SOLUTION
+\begin{frame}{Track Fusion: Naive Solution}
+
+The naive solution: \alert{assume that $R_{12}=0$}
+
+\vspace{1em}
+
+Optimal fusion given that $R_{12}=0$:
+\begin{align*}
+    \xhat &= P\left(R_1\inv y_1 + R_2\inv y_2  \right) &
+    P &= \left(R_1\inv + R_2\inv \right)\inv
+\end{align*}
+
+%\pause
+
+\vspace{1em}
+
+If $R_{12}\neq0$, the \alert{uncertainty $P$ is underestimated} --- double counting of information
+
+\end{frame}
+
+
+
+
+% TF: UNKNOWN XCORR
+\begin{frame}{Track Fusion: Conservative Estimators}
+
+\textbf{Issues}:
+\begin{itemize}
+    \item unknown correlations
+    \item if nonzero correlations are neglected the uncertainty $P$ is underestimated
+\end{itemize}
+
+\textbf{Possible solution:} \emph{conservative estimators}
+
+\begin{rfshadedcolorbox}[title={Conservative Estimate}]{myyellow!200!}
+    An estimate $(\xhat,P)$ of $x$ is \emph{conservative} if
+    \begin{equation*}
+        P - \EV(\tbfx\tbfx\trnsp) \succeq 0
+    \end{equation*}
+    where $\tbfx=\hbfx-x$ is the error
+\end{rfshadedcolorbox}
+
+\end{frame}
+
+
+% CONSERVATIVE AND NON-CONSERVATIVE
+\begin{frame}{Conservative and Non-Conservative Estimates}
+
+\begin{figure}
+    \begin{tikzpicture}[scale=.5]
+        \input{../report/fig/cha2/conservative_estimate.tex}
+    \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+
+% TF: CF
+\begin{frame}{Track Fusion: Conservative Methods}
+
+\textbf{Task:} Fuse $(y_1,R_1)$ and $(y_2,R_2)$, where $R_{12}$ is unknown
+
+\vspace{2em}
+
+\begin{columns}
+
+\begin{column}{0.475\textwidth}
+
+\textbf{Conservative fusion methods:}
+\begin{itemize}
+    \item \textcolor{clrci}{\textbf{Covarance intersection}}
+    \item \textcolor{clrle}{\textbf{largest ellipsoid method}}
+    \item \textcolor{gray}{inverse covariance intersection}
+    \item \textcolor{gray}{split covariance intersection}
+    \item $\cdots$
+\end{itemize}
+
+\end{column}
+
+\begin{column}{0.475\textwidth}
+\begin{figure}
+    \begin{tikzpicture}[scale=0.75]
+        \input{fig/fusion_methods_ellipses.tex}
+    \end{tikzpicture}
+\end{figure}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+% COVARIANCE INTERSECTION
+\begin{frame}{Covariance Intersection}
+
+\begin{rfshadedcolorbox}[title={Covariance Intersection}]{clrci}
+The estimates are fused using \emph{covariance intersection} (\abbrCI) according to
+\begin{align*}
+    \xhat &= P\left( \omega R_1\inv y_1 + (1-\omega)R_2\inv y_2 \right) &
+    P &= \left(\omega R_1\inv + (1-\omega)R_2\inv \right)\inv
+\end{align*}
+where $\omega\in[0,1]$ is computed by solving
+\begin{equation*}
+    \begin{aligned}
+        & \underset{\omega}{\minimize} & & J(P)
+    \end{aligned}
+\end{equation*}
+\end{rfshadedcolorbox}
+
+\pause
+
+\vspace{1em}
+
+Similar in structure to the naive fusion method:
+\begin{align*}
+    \xhat &= P\left(R_1\inv y_1 + R_2\inv y_2  \right) &
+    P &= \left(R_1\inv + R_2\inv \right)\inv
+\end{align*}
+
+\end{frame}
+
+
+% LARGEST ELLIPSOID Method
+\begin{frame}{Largest Ellipsoid Method}
+
+\begin{rfshadedcolorbox}[title={Largest Ellipsoid Method},fontupper=\footnotesize]{clrle}
+    The estimates are fused using the \emph{largest ellipsoid} (\abbrLE) method according to
+    \begin{enumerate}
+        \item Factorize $R_1=U_1\Sigma_1U_1\trnsp$ and let $T_1=\Sigma_1\invsqrt U_1\trnsp$. Factorize $T_1R_2T_1\trnsp=U_2\Sigma_2U_2\trnsp$ and let $T_2=U_2\trnsp$.
+        \item Transform using $T=T_2T_1$ according to
+            \begin{align*}
+                 z_1 &= Ty_1 & C_1 &= TR_1T\trnsp=I &
+                 z_2 &= Ty_2 & C_2 &= TR_2T\trnsp
+            \end{align*}
+        \item For each $i=1,\dots,\nx$, compute
+            \begin{equation*}
+                \left([z]_i,[C]_{ii}\right) =
+                    \begin{cases}
+                        \left([z_1]_i,1\right), & \text{ if } 1 \leq [C_2]_{ii},\\
+                        \left([z_2]_i,[C_2]_{ii}\right), & \text{ if } 1 > [C_2]_{ii}.
+                    \end{cases}
+            \end{equation*}
+        \item Transform back:
+            \begin{align*}
+                \xhat &= T\inv z &
+                P &= T\inv C T\invtrnsp
+            \end{align*}
+    \end{enumerate}
+\end{rfshadedcolorbox}
+
+\end{frame}
+
+
+% MC EVALUATION
+\begin{frame}{Monte Carlo Evaluation}
+
+\emph{Monte Carlo} (\abbrMC) based approach for evaluation:
+\begin{enumerate}
+	\item Specify local sensors, local state estimation filters, and communication pattern.
+	\item Specify the considered track fusion methods.
+	\item Define a metrics for tracking performance and conservativeness.
+	\item Define characteristic target trajectories.
+	\item Tune the local filters for the characteristic trajectories.
+	\item Using \abbrMC simulations, evaluate each fusion method with respect to performance and conservativeness.
+\end{enumerate}
+
+An estimate at the \ith \abbrMC run at time $k$ is denoted $(\xhat_k^i,P_k^i)$
+
+\end{frame}
+
+
+% PERFORMANCE EVALUATION
+\begin{frame}{Performance Evaluation}
+
+\emph{Root mean squared error} (\abbrRMSE) is a common measure for performance
+\begin{itemize}
+    \item requires the true state to be known --- \alert{cannot be computed online}
+\end{itemize}
+
+\pause
+
+\vspace{1em}
+
+\begin{rfshadedcolorbox}[title={Root Mean Trace}]{darkgray}
+    The sampled \emph{root mean trace} (\abbrRMT) at time $k$ is defined as
+    \begin{equation*}
+        \rmt_k = \sqrt{\frac{1}{M}\sum_{i=1}^M P_k^i }
+    \end{equation*}
+\end{rfshadedcolorbox}
+
+
+
+\end{frame}
+
+
+% CONSERVATIVENESS EVALUATION
+\begin{frame}{Conservativeness Evaluation}
+
+Since $P=LL\trnsp\succ0$, the Cholesky factor $L$ is invertible such that
+\begin{equation*}
+    P \succeq \EV(\tbfx\tbfx\trnsp) \iff I \succeq L\inv \EV(\tbfx\tbfx\trnsp) L\invtrnsp
+\end{equation*}
+
+\vspace{1em}
+
+Hence $(\xhat,P)$ is conservative iff
+\[
+    \lambdamax\left(L\inv\EV(\tbfx\tbfx\trnsp) L\invtrnsp\right) \leq 1
+\]
+$\lambdamax(A)$ denotes the largest eigenvalue of a matrix $A$
+
+\end{frame}
+
+\begin{frame}{Conservativeness Evaluation}
+
+\begin{rfshadedcolorbox}[title={Conservativeness Index}]{darkgray}
+    The sampled \emph{conservativeness index} (\abbrCOIN) at time $k$ is defined as
+    \begin{equation*}
+        \coin_k = \lambdamax\left( \underbrace{\frac{1}{M} \sum_{i=1}^M (L_k^i)\inv\xtilde_k^i(\xtilde_k^i)\trnsp(L_k^i)\invtrnsp }_{\calC_k} \right)
+    \end{equation*}
+    where $L_k^i(L_k^i)\trnsp=P_k^i$, $\xtilde_k^i$ is the error in the \ith \abbrMC run, and $\calC_k$ is the sampled normalized estimation error squared matrix
+\end{rfshadedcolorbox}
+
+\pause
+
+\vspace{1em}
+
+\alert{Want $\coin_k$ to be smaller than or equal to 1}
+
+\end{frame}
+
+
+
+% EVALUATION
+\begin{frame}{Evaluation Scenario}
+
+\begin{figure}
+    \begin{tikzpicture}[scale=.5]
+        \input{../report/fig/cha2/evaluation_scenario.tex}
+    \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+
+% RESULTS
+\begin{frame}{Evaluation Results}
+
+\begin{figure}
+    \begin{tikzpicture}[xscale=.25,yscale=1.2]
+        \input{fig/tf_evaluation_results.tex}
+    \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+
+
+
+
+
+% --- COMMUNICATION MANAGEMENT ---
+\section{Part II: Communication Management Design and Implementation}
+
+
+% CM: INTRO
+\begin{frame}{Communication Management: Data Reduction}
+
+\begin{figure}
+    \includegraphics[width=.6\textwidth]{figure3-2_decentralized_single-target_tracking_system}
+\end{figure}
+
+\textbf{Two main approaches:}
+\begin{itemize}
+    \item diagonal covariance approximation (\abbrDCA)
+    \item dimension-reduction (\abbrDR)
+\end{itemize}
+
+\end{frame}
+
+
+% DCA
+\begin{frame}{Diagonal Covariance Approximation}
+
+\textbf{Problem:}
+\begin{itemize}
+    \item Agent~2 is about to transmit $(y_2,R_2)$ to Agent~1
+    \item limited communication capacity: the data $(y_2,R_2)$ must be reduced
+\end{itemize}
+
+%\pause
+\vspace{1em}
+
+\textbf{Observation:} $y_i$ scales as $\nx$ and $R_i$ as $\nx^2$
+
+%\pause
+\vspace{1em}
+
+\textbf{Simple solution:} exchange $(y_2,D_2)$ where $D_2$ is diagonal --- essentially an $\nx$-dimensional vector
+
+\end{frame}
+
+
+% DCA
+\begin{frame}{Diagonal Covariance Approximation: Example}
+
+Let $R_2=\BBSM4&1\\1&1\EBSM$ and $D_2=\BBSM4&0\\0&1\EBSM$
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \input{fig/dca_motivating_example.tex}
+    \end{tikzpicture}
+\end{figure}
+
+\pause
+\vspace{1em}
+
+Agent~2 preserves conservativeness if $(y_2,\Ds_2)$ is exchanged
+
+\end{frame}
+
+
+% DCA: 2 OPTIONS
+\begin{frame}{Diagonal Covariance Approximation: Two Options}
+
+Two options are considered:
+\begin{itemize}
+	\item Agent~2 transmits $(y_2,\Ds_2)$ to Agent~1, where $\Ds_2\succeq R_2$. In this case, Agent~2 has already preserved conservativeness, and hence, Agent~1 can use the received estimate directly without any additional action.
+	\item Agent~2 transmits $(y_2,D_2)$ to Agent~1. In this case, Agent~1 must explicitly handle that $D_2\not\succeq R_2$ to ensure conservativeness after track fusion.
+\end{itemize}
+
+\end{frame}
+
+
+% D1: DCA-EIG
+\begin{frame}{Diagonal Covariance Approximation: Eigenvalue Based Scaling}
+
+\begin{rfshadedcolorbox}[title={Eigenvalue Based Scaling}]{myyellow!200!}
+    \begin{equation*}
+    \begin{aligned}
+    	& \underset{s}{\minimize} & & s \\
+    	& \subjectto & & \Ds_2 = sD_2 \succeq R_2.
+    \end{aligned}
+    \end{equation*}
+\end{rfshadedcolorbox}
+
+%\pause
+\vspace{1em}
+
+The solution is
+\[
+    s^\star=\lambdamax(D_2\invsqrt R_2D_2\invsqrt)
+\]
+
+\end{frame}
+
+
+% D2: DCA-HYP
+\begin{frame}{Diagonal Covariance Approximation: Hyperrectangle Enclosing}
+
+Agent~1 receives $(y_2,D_2)$ from Agent~2
+\begin{itemize}
+    \item Assume $R_2=\BBSM4&1\\1&1\EBSM$ such that $D_2=\BBSM4&0\\0&1\EBSM$
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=.85]
+        \input{fig/example_hyperrectangle_enclosing.tex}
+    \end{tikzpicture}
+\end{figure}
+
+%\pause
+%\vspace{1em}
+
+The parametrization given by
+\begin{equation*}
+    D_2^\omega = \BBM \frac{4}{\omega_1}&0 \\ 0&\frac{1}{\omega_2} \EBM
+\end{equation*}
+where $\omega_i>0$ and $\sum_i\omega_i=1$
+
+\end{frame}
+
+
+% DR: BASIC IDEA
+\begin{frame}{Dimension Reduction: Basic Idea}
+
+Instead of transmitting $(y_2,R_2)$ Agent~2 can transmit $(\yM,\RM)$ where
+\begin{align*}
+    \yM &= \M y_2 &
+    \RM &= \M R_2\Mt
+\end{align*}
+and $\M\in\realsmnx$ is a ''wide matrix'', \ie, $m<\nx$
+
+\vspace{1em}
+
+This is a \emph{dimension reduction} problem
+
+\end{frame}
+
+
+% DR: CHOOSING PSI
+\begin{frame}{Dimension Reduction: Designing $\M$}
+
+How to choose $\M$? \alert{Optimize for fusion performance!}
+
+\vspace{1em}
+
+Assume that $(y_1,R_1)$ and $(\yM,\RM)$ are fused according to
+\begin{align*}
+    \xhat &= P\left( R_1\inv y_1 + \Mt\RM\inv\yM \right) &
+    P &= \left(R_1\inv + \Mt\RM\inv\M \right)\inv
+\end{align*}
+which is optimal given that the estimates are uncorrelated
+
+\end{frame}
+
+
+% DR: SOLUTION
+\begin{frame}{Dimension Reduction: Designing $\M$}
+
+\begin{rfshadedcolorbox}[title={Fusion Optimal Dimension Reduction}]{myorange}
+    A fusion optimal $\Mopt$ is computed by solving
+    \begin{equation*}
+    	\begin{aligned}
+    		& \underset{\M}{\minimize} & & \trace(P).
+    	\end{aligned}
+    \end{equation*}
+    where $P=\left(R_1\inv + \Mt\RM\inv\M \right)\inv$
+\end{rfshadedcolorbox}
+
+\vspace{1em}
+
+The solution is given by an eigenvalue problem!
+
+\end{frame}
+
+
+% DR VS DCA
+\begin{frame}{Communication Reduction}
+
+Let $\ndca$, $\ndr$, and $\nfull$ denote the number of parameters to be transmitted using \abbrDCA, \abbrDR, and full estimates, respectively
+
+\begin{figure}
+    \centering
+    %\includegraphics[width=.95\textwidth]{figure5-1_dr_communication_reduction}
+    \begin{tikzpicture}
+        \input{fig/cm_communication_gain.tex}
+    \end{tikzpicture}
+\end{figure}
+
+
+\end{frame}
+
+
+% --- SUMMARY ---
+\section*{Summary}
+
+
+\begin{frame}{Summary}
+
+\begin{small}
+
+\textbf{Excluded material:}
+\begin{itemize}
+    \item the \abbrCLUE framework
+    \item common information estimate --- keeping track of network common information
+    \item practical and theoretical aspects related to the data reduction techniques
+%    \item $\cdots$
+\end{itemize}
+
+\vskip0pt plus.5fill
+
+\textbf{Related resources:} \alert{\url{https://github.com/robinforsling/dtt/}}
+\begin{itemize}
+%    \item it is quite short, read it!
+    \item \matlab library source code for all examples and simulation
+    \item thesis summary
+    \item posters, papers, bibliography, figures
+\end{itemize}
+
+\end{small}
+
+\end{frame}
+
+
+\end{document}

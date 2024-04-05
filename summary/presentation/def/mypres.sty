@@ -1,0 +1,47 @@
+
+% --- PACKAGES --
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usefonttheme{professionalfonts}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+%\usepackage{lmodern}
+
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{bm,xspace,url,hyperref}
+%\usepackage{booktabs,enumerate,enumitem}
+\usepackage{tcolorbox}
+\usepackage{caption}
+
+\usepackage{../report/def/mymacros}
+\usepackage{../report/def/myabbr}
+
+
+
+
+% --- GRAPHICS ---
+\usepackage{graphicx}
+    \graphicspath{{../../figure/chapter_1/}{../../figure/chapter_2/}{../../figure/chapter_3/}{../../figure/chapter_4/}{../../figure/chapter_5/}}
+
+\usepackage{def/mygraphics}
+
+
+
+% --- COLORS ---
+\usepackage{../report/def/mycolors}
+\colorlet{rfbg}{black!90!}
+
+
+
+
+
+% --- ENVIRONMENTS ---
+\tcbuselibrary{skins}
+
+\newtcolorbox{rfcolorbox}[2][]{skin=enhanced,colback=#2!5!,colframe=#2,coltext=black,center title,fonttitle={\bfseries},#1}
+
+\newtcolorbox{rfthickcolorbox}[2][]{skin=enhanced,colback=#2!5!,colframe=#2,coltext=black,fontupper=\normalsize,fontlower=\scriptsize,center title,boxed title size=standard,boxrule=2pt,arc=2mm,fonttitle={\bfseries\scshape\large},segmentation style={loosely dashed,line width=1pt},#1}
+
+\newtcolorbox{rfthickercolorbox}[2][]{skin=enhanced,colback=#2!5!,colframe=#2,coltext=black,fontupper=\normalsize,fontlower=\scriptsize,center title,boxed title size=standard,boxrule=4pt,arc=2mm,fonttitle={\bfseries\scshape\large},segmentation style={loosely dashed,line width=2pt},#1}
+
+\newtcolorbox{rfshadedcolorbox}[2][]{skin=enhanced,colback=#2!5!,colframe=#2,coltext=black,boxrule=2pt,center title,drop fuzzy shadow,fonttitle={\bfseries},#1}

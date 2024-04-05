@@ -1,0 +1,82 @@
+
+\newcommand*\drawnfull{\draw[very thick,gray]}
+\newcommand*\drawndca{\draw[very thick,dashed,black]}
+\newcommand{\drawndr}[1]{\draw[very thick,#1]}
+\newcommand{\drawratio}[1]{\draw[very thick,#1]}
+
+\def\xlega{3}
+\def\xlegb{13}
+\def\yleg{300}
+\def\lleg{1.6}
+\def\sleg{40}
+
+\def\addxlabel(#1){\node at (#1) {$\nx$};}
+
+
+
+
+% --- FIGURE ---
+\BFS
+
+
+% LEFT
+\begin{scope}[xscale=0.2,yscale=0.01]
+
+\foreach \y in {0,50,...,200} {\drawytick(0,\y);\node [left] at (0,\y) {\y};}
+\foreach \x in {2,6,...,18} {\drawxtick(\x,0);\node [below] at (\x,0) {\x};}
+\drawcoordinateframe(0,250)--(0,0)--(21,0);
+\addxlabel(10.5,-60)
+\node [rotate=90] at (-5,125) {Number of parameters};
+
+\drawnfull plot [smooth] coordinates {(2,5)(3,9)(4,14)(5,20)(6,27)(7,35)(8,44)(9,54)(10,65)(11,77)(12,90)(13,104)(14,119)(15,135)(16,152)(17,170)(18,189)(19,209)(20,230)};
+\drawndr{clrm1} plot [smooth] coordinates {(2,3)(3,4)(4,5)(5,6)(6,7)(7,8)(8,9)(9,10)(10,11)(11,12)(12,13)(13,14)(14,15)(15,16)(16,17)(17,18)(18,19)(19,20)(20,21)};
+\drawndr{clrm2} plot [smooth] coordinates {(3,7)(4,9)(5,11)(6,13)(7,15)(8,17)(9,19)(10,21)(11,23)(12,25)(13,27)(14,29)(15,31)(16,33)(17,35)(18,37)(19,39)(20,41)};
+\drawndr{clrm3} plot [smooth] coordinates {(4,12)(5,15)(6,18)(7,21)(8,24)(9,27)(10,30)(11,33)(12,36)(13,39)(14,42)(15,45)(16,48)(17,51)(18,54)(19,57)(20,60)};
+\drawndr{clrm4} plot [smooth] coordinates {(5,18)(6,22)(7,26)(8,30)(9,34)(10,38)(11,42)(12,46)(13,50)(14,54)(15,58)(16,62)(17,66)(18,70)(19,74)(20,78)};
+\drawndca plot [smooth] coordinates {(2,4)(3,6)(4,8)(5,10)(6,12)(7,14)(8,16)(9,18)(10,20)(11,22)(12,24)(13,26)(14,28)(15,30)(16,32)(17,34)(18,36)(19,38)(20,40)};
+
+\drawndr{clrm1} ({\xlega},{\yleg})--({\xlega+\lleg},{\yleg}) node [right,black] {$\ndr|_{m=1}$};
+\drawndr{clrm2} ({\xlega},{\yleg-\sleg})--({\xlega+\lleg},{\yleg-\sleg}) node [right,black] {$\ndr|_{m=2}$};
+\drawndr{clrm3} ({\xlega},{\yleg-2*\sleg})--({\xlega+\lleg},{\yleg-2*\sleg}) node [right,black] {$\ndr|_{m=3}$};
+\drawndr{clrm4} ({\xlega},{\yleg-3*\sleg})--({\xlega+\lleg},{\yleg-3*\sleg}) node [right,black] {$\ndr|_{m=4}$};
+
+\drawndca ({\xlegb},{\yleg})--({\xlegb+\lleg},{\yleg}) node [right,black] {$\ndca$};
+\drawnfull ({\xlegb},{\yleg-\sleg})--({\xlegb+\lleg},{\yleg-\sleg}) node [right,black] {$\nfull$};
+
+\end{scope}
+
+
+% RIGHT
+\begin{scope}[xscale=0.2,yscale=2.5,xshift=32cm]
+
+\def\yleg{1.2}
+\def\sleg{0.16}
+
+\drawsupportline(0,0.5)--(9,0.5)--(9,0);
+\drawsupportline(0,0.185)--(9,0.185);
+\drawsupportline(0,0.430)--(15,0.430)--(15,0);
+\drawsupportline(0,0.119)--(15,0.119);
+
+\foreach \y in {0,0.25,0.5,0.75,1.0} {\drawytick(0,\y);\node [left] at (0,\y) {\y};}
+\foreach \x in {2,6,...,18} {\drawxtick(\x,0);\node [below] at (\x,0) {\x};}
+\drawcoordinateframe(0,1)--(0,0)--(21,0);
+\addxlabel(10.5,-.24)
+\node [rotate=90] at (-5,0.5) {$\frac{\ndr}{\nfull}$};
+
+\drawratio{clrm1} plot [smooth] coordinates {(2,0.600)(3,0.444)(4,0.357)(5,0.300)(6,0.259)(7,0.229)(8,0.205)(9,0.185)(10,0.169)(11,0.156)(12,0.144)(13,0.135)(14,0.126)(15,0.119)(16,0.112)(17,0.106)(18,0.101)(19,0.096)(20,0.091)};
+\drawratio{clrm2} plot [smooth] coordinates {(3,0.778)(4,0.643)(5,0.550)(6,0.481)(7,0.429)(8,0.386)(9,0.352)(10,0.323)(11,0.299)(12,0.278)(13,0.260)(14,0.244)(15,0.230)(16,0.217)(17,0.206)(18,0.196)(19,0.187)(20,0.178)};
+\drawratio{clrm3} plot [smooth] coordinates {(4,0.857)(5,0.750)(6,0.667)(7,0.600)(8,0.545)(9,0.500)(10,0.462)(11,0.429)(12,0.400)(13,0.375)(14,0.353)(15,0.333)(16,0.316)(17,0.300)(18,0.286)(19,0.273)(20,0.261)};
+\drawratio{clrm4} plot [smooth] coordinates {(5,0.900)(6,0.815)(7,0.743)(8,0.682)(9,0.630)(10,0.585)(11,0.545)(12,0.511)(13,0.481)(14,0.454)(15,0.430)(16,0.408)(17,0.388)(18,0.370)(19,0.354)(20,0.339)};
+\drawndca plot [smooth] coordinates {(2,0.800)(3,0.667)(4,0.571)(5,0.500)(6,0.444)(7,0.400)(8,0.364)(9,0.333)(10,0.308)(11,0.286)(12,0.267)(13,0.250)(14,0.235)(15,0.222)(16,0.211)(17,0.200)(18,0.190)(19,0.182)(20,0.174)};
+
+\drawndr{clrm1} ({\xlegb},{\yleg})--({\xlegb+\lleg},{\yleg}) node [right,black] {$m=1$};
+\drawndr{clrm2} ({\xlegb},{\yleg-\sleg})--({\xlegb+\lleg},{\yleg-\sleg}) node [right,black] {$m=2$};
+\drawndr{clrm3} ({\xlegb},{\yleg-2*\sleg})--({\xlegb+\lleg},{\yleg-2*\sleg}) node [right,black] {$m=3$};
+\drawndr{clrm4} ({\xlegb},{\yleg-3*\sleg})--({\xlegb+\lleg},{\yleg-3*\sleg}) node [right,black] {$m=4$};
+
+\drawndca ({\xlega},{\yleg})--({\xlega+\lleg},{\yleg}) node [right,black] {$\frac{\ndca}{\nfull}$};
+
+\end{scope}
+
+
+\EFS

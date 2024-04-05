@@ -1,0 +1,68 @@
+
+\RequirePackage{tikz}
+	\usetikzlibrary{decorations.markings}
+	\usetikzlibrary{positioning,shapes,shapes.geometric,calc}
+	\usetikzlibrary{arrows,plotmarks,backgrounds}
+	%\usetikzlibrary{arrows.new,}
+	\usetikzlibrary{arrows.meta}
+	\usetikzlibrary{shadings,fadings,patterns}
+	\tikzfading[name=fade out,
+	    inner color=transparent!0,
+	    outer color=transparent!100]
+
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+    { \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
+
+\def\middlepoint(#1)(#2){($(#1)!.5!(#2)$)}
+\def\onethirdpoint(#1)(#2){($(#1)!.333!(#2)$)}
+\def\twothirdpoint(#1)(#2){($(#1)!.666!(#2)$)}
+\def\onequarterpoint(#1)(#2){($(#1)!.25!(#2)$)}
+\def\threequarterpoint(#1)(#2){($(#1)!.75!(#2)$)}
+
+\RequirePackage{pgfplots}
+	\pgfplotsset{compat=newest}
+
+\newlength\fheight
+\newlength\fwidth
+
+\newrobustcmd*{\mysquare}[1]{\tikz{\filldraw[draw=#1,fill=#1] (0,0) rectangle (0.18cm,0.18cm);}}
+\newrobustcmd*{\mydiamond}[1]{\tikz{\filldraw[draw=#1,fill=#1,rotate=45] (0,0) rectangle (0.16cm,0.16cm);}}
+\newrobustcmd*{\mycircle}[1]{\tikz{\filldraw[draw=#1,fill=#1] (0,0) circle [radius=0.1cm];}}
+\newrobustcmd*{\myuptriangle}[1]{\tikz{\filldraw[draw=#1,fill=#1] (0,0) -- (0.2cm,0) -- (0.1cm,0.173cm);}}
+\newrobustcmd*{\mydowntriangle}[1]{\tikz{\filldraw[draw=#1,fill=#1] (0,0) -- (0.2cm,0) -- (0.1cm,-0.173cm);}}
+
+\newrobustcmd*{\myxtick}{\tikz{\draw[black!100!,line width=0.02mm](0,0)--(0,1.4mm);\draw[white,opacity=0](0,0)--(0,-1.4mm);}}
+\newrobustcmd*{\myytick}{\tikz{\draw[black!100!,line width=0.02mm](0,0)--(1.4mm,0);\draw[white,opacity=0,](0,0)--(-1.4mm,0);}}
+
+
+% --- TIKZ MACROS ---
+\newcommand{\drawprocessingunit}[1]{\draw[semithick,black,fill=#1]}
+\newcommand{\drawsensornode}{\draw[semithick,black,fill=black]}
+\newcommand{\drawagent}[1]{\draw[semithick,black,fill=#1]}
+\newcommand{\drawdefaultellipse}[1]{\draw[ultra thick,#1]}
+
+\newcommand{\drawprocessingunitbox}[1]{\draw[semithick,black,fill=#1,rounded corners]}
+\newcommand{\drawscopebox}[1]{\draw[semithick,color=#1,fill=#1!50!,rounded corners]}
+\newcommand{\drawsensorbox}{\draw[color=black,fill=black,rounded corners]}
+\newcommand{\drawsystembox}{\draw[semithick,black,fill=white,rounded corners]}
+
+\newcommand{\drawsensorarrow}{\draw[-latex]}
+\newcommand{\drawsystemarrow}{\draw[-latex]}
+\newcommand{\drawcomarrow}{\draw[densely dotted,line width=.25mm]}
+
+\newcommand{\drawtargettrajectory}{\draw[ultra thick,black]}
+
+\newcommand{\sensoropt}[1]{[opacity=0.4,color=#1!100!,fill]}
+
+\newcommand{\drawcoordinateframe}{\draw[line width=0.2mm,{Bar[right,width=3mm]}-{Bar[left,width=3mm]}]}
+\newcommand*\drawtick{\draw[black!90!,line width=0.1mm]}
+%\def\drawytick(#1){\draw[black!80!,line width=0.1mm,{Bar[right,width=2mm]}-](#1);}
+\def\drawxtick(#1){\node at (#1) {\myxtick};}
+\def\drawytick(#1){\node at (#1) {\myytick};}
+
+\newcommand{\drawsupportline}{\draw[black!100!,line width=0.02mm]}
+\newcommand{\drawhighlightarea}{\fill[gray!10!]}
+
+\newcommand{\drawzoombox}{\draw[semithick,black!90!,solid]}
+
+\newcommand*\drawaneesconfidence{\fill[gray!75!]}

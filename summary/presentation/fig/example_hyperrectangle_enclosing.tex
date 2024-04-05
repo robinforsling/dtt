@@ -1,0 +1,49 @@
+
+\newcommand*\drawBellipse{\draw[gray,thick]}
+\newcommand*\drawhyperrectangle{\draw[thick,black]}
+\newcommand{\drawdiagonalbound}[1]{\draw[ultra thick,#1]}
+
+\def\xl{2}
+\def\yl{1}
+
+\def\xleg{5.25}
+\def\yleg{0.75}
+\def\sleg{0.5}
+\def\lleg{0.5}
+
+
+
+% --- FIGURE ---
+\BFS
+
+\def\bbx{8}; \def\bby{1}
+%\draw [white,opacity=0] (-\bbx,-\bby) rectangle (\bbx,\bby);
+
+\foreach \r/\ly/\lx in {154.90/0.40/2.20,156.58/0.55/2.17,158.49/0.67/2.13,160.67/0.76/2.10,163.15/0.83/2.07,165.96/0.89/2.05,169.10/0.94/2.03,172.53/0.97/2.01,176.20/0.99/2.00,0.00/1.00/2.00,-176.20/0.99/2.00,-172.53/0.97/2.01,-169.10/0.94/2.03,-165.96/0.89/2.05,-163.15/0.83/2.07,-160.67/0.76/2.10,-158.49/0.67/2.13,-156.58/0.55/2.17,-154.90/0.40/2.20} {
+	\drawBellipse[opacity=0.2] (0,0) ellipse [x radius = \lx, y radius = \ly, rotate = \r];}
+
+\foreach \r/\ly/\lx in {154.90/0.40/2.20,164.52/0.87/2.06,0.00/1.00/2.00,-164.52/0.87/2.06,-154.90/0.40/2.20} {
+	\drawBellipse[opacity=0.5] (0,0) ellipse [x radius = \lx, y radius = \ly, rotate = \r];}
+
+% Box
+\drawhyperrectangle (-\xl,-\yl) rectangle (\xl,\yl);
+
+% Bounds
+\drawdiagonalbound{clra}(0,0)ellipse[x radius = 4.47, y radius = 1.12];
+\drawdiagonalbound{clrb}(0,0)ellipse[x radius = 3.65, y radius = 1.20];
+\drawdiagonalbound{clrc}(0,0)ellipse[x radius = 3.16, y radius = 1.29];
+\drawdiagonalbound{clrd}(0,0)ellipse[x radius = 2.83, y radius = 1.41];
+
+% Legend
+\begin{scriptsize}
+\drawdiagonalbound{clra} ({\xleg},{\yleg})--({\xleg+\lleg},{\yleg}) node [right,black] {$\Domega_2|_{\omega_1=0.2,\omega_2=0.8}$};
+\drawdiagonalbound{clrb} ({\xleg},{\yleg-\sleg})--({\xleg+\lleg},{\yleg-\sleg}) node [right,black] {$\Domega_2|_{\omega_1=0.3,\omega_2=0.7}$};
+\drawdiagonalbound{clrc} ({\xleg},{\yleg-2*\sleg})--({\xleg+\lleg},{\yleg-2*\sleg}) node [right,black] {$\Domega_2|_{\omega_1=0.4,\omega_2=0.6}$};
+\drawdiagonalbound{clrd} ({\xleg},{\yleg-3*\sleg})--({\xleg+\lleg},{\yleg-3*\sleg}) node [right,black] {$\Domega_2|_{\omega_1=\omega_2=0.5}$};
+% \drawBellipse ({\xleg},{\yleg-4*\sleg})--({\xleg+\lleg},{\yleg-4*\sleg}) node [right,black] {$B\in\calA$};
+% \drawhyperrectangle ({\xleg},{\yleg-5*\sleg})--({\xleg+\lleg},{\yleg-5*\sleg}) node [right,black] {$\calR$};
+\end{scriptsize}
+
+%\node at (0,0) {$\calA$};
+
+\EFS
