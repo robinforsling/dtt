@@ -37,7 +37,7 @@
     % \and
     % AI \& Tactical Autonomy, Advanced Program, Saab Aeronautics
 }
-\date[]{%Speaker's Corner 2024-04-05 %\\
+\date[]{Speaker's Corner 2024-04-05 %\\
 % \begin{tikzpicture}
 %     \draw[white](0,0)circle[radius=2];
 % \end{tikzpicture}
@@ -272,19 +272,19 @@
 % OUTLINE
 \begin{frame}{Outline}
 
-% \begin{small}
-%
-% \textbf{Resources:} \alert{\url{https://github.com/robinforsling/dtt/}}
-% \begin{itemize}
-%     \item \matlab source code and thesis summary
-% \end{itemize}
-%
-% %\makebox[.5\linewidth]{\rule{\paperwidth}{0.4pt}}
-%
-% \pause
-% \vspace{0.5em}
-%
-% \begin{rfshadedcolorbox}[title={Outline}]{darkgray}
+\begin{small}
+
+\textbf{Resources:} \alert{\url{https://github.com/robinforsling/dtt/}}
+\begin{itemize}
+    \item \matlab source code and thesis summary
+\end{itemize}
+
+%\makebox[.5\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\pause
+\vspace{0.5em}
+
+\begin{rfshadedcolorbox}[title={Outline}]{darkgray}
 
 \textbf{Part I:} Track fusion design and evaluation
 \begin{itemize}
@@ -292,13 +292,13 @@
     \item evaluation measures and analysis
 \end{itemize}
 
-\textbf{Part II:} Decentralized target tracking under communication constraints
+\textbf{Part II:} Communication management design and implementation
 \begin{itemize}
     \item two frameworks for reducing the communication load
 \end{itemize}
 
-% \end{rfshadedcolorbox}
-% \end{small}
+\end{rfshadedcolorbox}
+\end{small}
 
 \end{frame}
 
@@ -476,7 +476,7 @@ If $R_{12}\neq0$, the \alert{uncertainty $P$ is underestimated} --- double count
 
 \textbf{Conservative fusion methods:}
 \begin{itemize}
-    \item \textcolor{clrci}{\textbf{Covarance intersection}}
+    \item \textcolor{clrci}{\textbf{covarance intersection}}
     \item \textcolor{clrle}{\textbf{largest ellipsoid method}}
     \item \textcolor{gray}{inverse covariance intersection}
     \item \textcolor{gray}{split covariance intersection}
@@ -592,7 +592,7 @@ An estimate at the \ith \abbrMC run at time $k$ is denoted $(\xhat_k^i,P_k^i)$
 \begin{rfshadedcolorbox}[title={Root Mean Trace}]{darkgray}
     The sampled \emph{root mean trace} (\abbrRMT) at time $k$ is defined as
     \begin{equation*}
-        \rmt_k = \sqrt{\frac{1}{M}\sum_{i=1}^M P_k^i }
+        \rmt_k = \sqrt{\frac{1}{M}\sum_{i=1}^M \trace(P_k^i) }
     \end{equation*}
 \end{rfshadedcolorbox}
 
