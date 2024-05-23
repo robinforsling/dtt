@@ -15,17 +15,22 @@ set_latex_interpreter;
 par.M = 1e4;
 par.nk = 60;
 par.kvec = 1:par.nk;
-par.kswitch = 10;
 
 I2 = eye(2); O2 = zeros(2);
 
 
-% ... PROCESS -------------------------------------------------------------
+% --- PROCESS -------------------------------------------------------------
 v0 = 10;
 x0 = [0;0;v0;0];
 
-qx = 1.5;
-qy = 1/1.5;
+Ts = 1;
+q = 10;
+alpha = 2;
+
+Fc = [O2 I2 ; O2 O2];
+Qc = q^2*[O2 O2 ; O2 diag([alpha 1/alpha])^2];
+[F0,Q0] = process_continuous_to_discrete(Fc,Qc,Ts); 
+Q0s = sqrtm(Q0);
 
 
 % --- SENSOR --------------------------------------------------------------
@@ -34,14 +39,10 @@ R0 = 100*I2;
 
 
 % --- ASSUMED PROCESS MODEL -----------------------------------------------
-Ts = 1;
-q = 10;
-
 pm.Ts = Ts;
 pm.q = q;
 pm.F = [I2 Ts*I2 ; O2 I2];
-pm.G = [Ts^2/2*I2 ; Ts*I2];
-pm.Q = q^2*(pm.G*pm.G');
+pm.Q = q^2*[Ts^3*I2/3 Ts^2*I2/2 ; Ts^2*I2/2 Ts*I2];
 
 
 % --- ASSSUMED SENSOR MODEL -----------------------------------------------
@@ -71,13 +72,8 @@ for imc = 1:par.M
     
 
         % --- PROCESS ---
-        q = pm.q; Ts = pm.Ts;
-        C = diag([qx qy]);
-        G = [Ts^2/2*C ; Ts*C];
-        F = pm.F;
-
-        w = q*G*randn(2,1);
-        xt = F*xt + w;
+        w = Q0s*randn(4,1);
+        xt = F0*xt + w;
 
         
         % --- MEASUREMENT ---
@@ -117,6 +113,7 @@ end
 nis_stats = compute_nis_statistics(par,data);
 Wishart_stats = compute_Wishart_statistics(par);
 det_stats = compute_detections(par,nis_stats,Wishart_stats);
+u_stats = compute_eigenvector_statistics(par,data);
 
 
 % --- RESULTS -------------------------------------------------------------
@@ -144,11 +141,22 @@ xlabel('$k$','interpreter','latex');
 figure(2);clf;hold on
 hc = plot(par.kvec(idx),det_stats.chi2.p(idx),'-'); hc.Color = clrmean; hc.LineWidth = lw;
 hw = plot(par.kvec(idx),det_stats.Wishart.p(idx),'-'); hw.Color = clrmax; hw.LineWidth = lw;
-xlabel('$k$','interpreter','latex'); ylabel('$p_{out}$'); 
+xlabel('$k$','interpreter','latex'); ylabel('$p_{out}$','interpreter','latex'); 
+
+% --- EIGENVECTORS ---
+figure(3);clf;
+
+subplot(1,2,1);hold on
+plot_mean_and_std(par.kvec,u_stats.thetamin,clrmin)
+xlabel('$k$','interpreter','latex'); ylabel('$\theta$ [degrees]','interpreter','latex')
+title('$u_{\min}$')
+
+subplot(1,2,2);hold on
+plot_mean_and_std(par.kvec,u_stats.thetamax,clrmax)
+xlabel('$k$','interpreter','latex'); ylabel('$\theta$ [degrees]','interpreter','latex')
+title('$u_{\max}$')
 
 end
-
-
 
 
 % --- LOCAL FUNCTIONS -----------------------------------------------------
@@ -166,13 +174,13 @@ function stats = compute_nis_statistics(par,data)
     stats.lambdamin = zeros(par.M,par.nk);
     stats.lambdamax = zeros(par.M,par.nk);
     for imc = 1:par.M
-        Pi = zeros(m);
+        Pihat = zeros(m);
         for k = par.kvec
             ytilde = data{imc}.ytilde(:,k);
-            L = chol(data{imc}.S(:,:,k),'lower'); 
-            nu = L\ytilde;
-            Pi = Pi + nu*nu';
-            lambda = eig(Pi/k);
+            B = chol(data{imc}.S(:,:,k),'lower'); 
+            nu = B\ytilde;
+            Pihat = Pihat + nu*nu';
+            lambda = eig(Pihat/k);
             stats.nis(imc,k) = sum(lambda);
             stats.lambdamean(imc,k) = stats.nis(imc,k)/m;
             stats.lambdamin(imc,k) = min(lambda);
@@ -219,6 +227,74 @@ function stats = compute_detections(par,nis_stats,Wishart_stats)
     stats.chi2.p = cnt_chi2/M;
 end
 
+function stats = compute_eigenvector_statistics(par,data)
+    m = 2; kvec = par.kvec; nk = length(kvec);
+    stats.mc.umin = zeros(2,nk);
+    stats.mc.umax = zeros(2,nk);
+    stats.run = cell(par.M);
+    % Over MC:
+    for k = kvec
+        Pihat = zeros(2);
+        for imc = 1:par.M
+            ytilde = data{imc}.ytilde(:,k);
+            B = chol(data{imc}.S(:,:,k),'lower');  
+            nu = B\ytilde;
+            Pihat = Pihat + nu*nu';
+        end
+        [U,Lambda] = eig(Pihat/par.M);
+        [~,imin] = min(diag(Lambda));
+        [~,imax] = max(diag(Lambda));
+        umin = U(:,imin);
+        umax = U(:,imax);
+        stats.mc.umin(:,k) = B*umin/norm(B*umin);
+        stats.mc.umax(:,k) = B*umax/norm(B*umax);
+    end
+    % Over single-run:
+     theta.min = zeros(par.M,nk);
+     theta.max = zeros(par.M,nk);
+    for imc = 1:par.M
+        stats.run{imc}.umin = zeros(2,nk);
+        stats.run{imc}.umax = zeros(2,nk);
+        Pihat = zeros(2);
+        for k = kvec
+            ytilde = data{imc}.ytilde(:,k);
+            B = chol(data{imc}.S(:,:,k),'lower'); 
+            nu = B\ytilde;
+            Pihat = Pihat + nu*nu';
+            [U,Lambda] = eig(Pihat/k);
+            [~,imin] = min(diag(Lambda));
+            [~,imax] = max(diag(Lambda));
+            umin = U(:,imin); bmin = B*umin/norm(B*umin);
+            umax = U(:,imax); bmax = B*umax/norm(B*umax);
+            stats.run{imc}.umin(:,k) = bmin;
+            stats.run{imc}.umax(:,k) = bmax;
+            theta.min(imc,k) = angle_from_yaxis(bmin);
+            theta.max(imc,k) = angle_from_xaxis(bmax);
+        end
+    end
+    % Single-run theta over MC:
+    stats.thetamin.mean = zeros(1,nk);
+    stats.thetamin.std = zeros(1,nk);
+    stats.thetamax.mean = zeros(1,nk);
+    stats.thetamax.std = zeros(1,nk);
+    for k = kvec
+        stats.thetamin.mean(k) = mean(theta.min(:,k));
+        stats.thetamin.std(k) = std(theta.min(:,k));
+        stats.thetamax.mean(k) = mean(theta.max(:,k));
+        stats.thetamax.std(k) = std(theta.max(:,k));
+    end
+end
+
+function theta = angle_from_xaxis(v)
+    v = sign(v(1))*v;
+    theta = atan2(v(2),v(1));
+end
+
+function theta = angle_from_yaxis(v)
+    v = sign(v(2))*v;
+    theta = atan2(v(2),v(1))-pi/2;
+end
+
 function plot_samples(kvec,lambda,clr)
     M = size(lambda,1);
     ns = min([M 10]);
@@ -230,3 +306,12 @@ function plot_samples(kvec,lambda,clr)
         h = plot(kvec,lambda(idx(i),:),'-'); h.LineWidth = lw; h.Color = clr;
     end
 end
+
+function varargout = plot_mean_and_std(kvec,s,clr)
+    lo = r2d*(s.mean-s.std); hi = r2d*(s.mean+s.std); av = r2d*s.mean;
+    hconf = plot_confidence_interval(kvec,lo,hi,clr);
+    hmean = plot(kvec,av,'-'); hmean.Color = clr; hmean.LineWidth = 2;
+    if nargout > 0; varargout{1} = hmean; end
+    if nargout > 1; varargout{2} = hconf; end
+end
+

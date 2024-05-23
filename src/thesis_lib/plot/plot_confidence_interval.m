@@ -4,6 +4,7 @@ function h = plot_confidence_interval(x,ylow,yhigh,varargin)
 %
 % 2024-01-18 Robin Forsling
 
+
 % DEFAULTS:
 clr = 0.5*[1 1 1];
 opacity = 0.25;
